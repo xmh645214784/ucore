@@ -1,0 +1,2449 @@
+diff -ruP /home/xmh/origin/ucore_lab/labcodes/lab4/.check_vmm.log lab4/.check_vmm.log
+--- /home/xmh/origin/ucore_lab/labcodes/lab4/.check_vmm.log	1970-01-01 00:00:00.000000000 +0000
++++ lab4/.check_vmm.log	2020-05-23 15:41:09.697725177 +0000
+@@ -0,0 +1,109 @@
++(THU.CST) os is loading ...
++
++Special kernel symbols:
++  entry  0xc0100036 (phys)
++  etext  0xc0109fb9 (phys)
++  edata  0xc0128000 (phys)
++  end    0xc012b1b8 (phys)
++Kernel executable memory footprint: 173KB
++ebp:0xc0124f38   eip:0xc0100ab1 arg :0x00010094 0x00010094 0xc0124f68 0xc01000df
++    kern/debug/kdebug.c:309: print_stackframe+22
++ebp:0xc0124f48   eip:0xc0100da5 arg :0x00000000 0x00000000 0x00000000 0xc0124fb8
++    kern/debug/kmonitor.c:129: mon_backtrace+10
++ebp:0xc0124f68   eip:0xc01000df arg :0x00000000 0xc0124f90 0xffff0000 0xc0124f94
++    kern/init/init.c:58: grade_backtrace2+33
++ebp:0xc0124f88   eip:0xc0100109 arg :0x00000000 0xffff0000 0xc0124fb4 0x0000002a
++    kern/init/init.c:63: grade_backtrace1+38
++ebp:0xc0124fa8   eip:0xc0100128 arg :0x00000000 0xc0100036 0xffff0000 0x0000001d
++    kern/init/init.c:68: grade_backtrace0+23
++ebp:0xc0124fc8   eip:0xc010014e arg :0xc0109fdc 0xc0109fc0 0x000031b8 0x00000000
++    kern/init/init.c:73: grade_backtrace+34
++ebp:0xc0124ff8   eip:0xc010008b arg :0xc010a1d4 0xc010a1dc 0xc0100d2d 0xc010a1fb
++    kern/init/init.c:33: kern_init+84
++memory management: default_pmm_manager
++e820map:
++  memory: 0009fc00, [00000000, 0009fbff], type = 1.
++  memory: 00000400, [0009fc00, 0009ffff], type = 2.
++  memory: 00010000, [000f0000, 000fffff], type = 2.
++  memory: 07ee0000, [00100000, 07fdffff], type = 1.
++  memory: 00020000, [07fe0000, 07ffffff], type = 2.
++  memory: 00040000, [fffc0000, ffffffff], type = 2.
++check_alloc_page() succeeded!
++check_pgdir() succeeded!
++check_boot_pgdir() succeeded!
++-------------------- BEGIN --------------------
++PDE(0e0) c0000000-f8000000 38000000 urw
++  |-- PTE(38000) c0000000-f8000000 38000000 -rw
++PDE(001) fac00000-fb000000 00400000 -rw
++  |-- PTE(000e0) faf00000-fafe0000 000e0000 urw
++  |-- PTE(00001) fafeb000-fafec000 00001000 -rw
++--------------------- END ---------------------
++use SLOB allocator
++kmalloc_init() succeeded!
++check_vma_struct() succeeded!
++page fault at 0x00000100: K/W [no page found].
++check_pgfault() succeeded!
++check_vmm() succeeded.
++ide 0:      10000(sectors), 'QEMU HARDDISK'.
++ide 1:     262144(sectors), 'QEMU HARDDISK'.
++SWAP: manager = fifo swap manager
++BEGIN check_swap: count 1, total 31954
++setup Page Table for vaddr 0X1000, so alloc a page
++setup Page Table vaddr 0~4MB OVER!
++set up init env for check_swap begin!
++page fault at 0x00001000: K/W [no page found].
++page fault at 0x00002000: K/W [no page found].
++page fault at 0x00003000: K/W [no page found].
++page fault at 0x00004000: K/W [no page found].
++set up init env for check_swap over!
++write Virt Page c in fifo_check_swap
++write Virt Page a in fifo_check_swap
++write Virt Page d in fifo_check_swap
++write Virt Page b in fifo_check_swap
++write Virt Page e in fifo_check_swap
++page fault at 0x00005000: K/W [no page found].
++swap_out: i 0, store page in vaddr 0x1000 to disk swap entry 2
++write Virt Page b in fifo_check_swap
++write Virt Page a in fifo_check_swap
++page fault at 0x00001000: K/W [no page found].
++swap_out: i 0, store page in vaddr 0x2000 to disk swap entry 3
++swap_in: load disk swap entry 2 with swap_page in vadr 0x1000
++write Virt Page b in fifo_check_swap
++page fault at 0x00002000: K/W [no page found].
++swap_out: i 0, store page in vaddr 0x3000 to disk swap entry 4
++swap_in: load disk swap entry 3 with swap_page in vadr 0x2000
++write Virt Page c in fifo_check_swap
++page fault at 0x00003000: K/W [no page found].
++swap_out: i 0, store page in vaddr 0x4000 to disk swap entry 5
++swap_in: load disk swap entry 4 with swap_page in vadr 0x3000
++write Virt Page d in fifo_check_swap
++page fault at 0x00004000: K/W [no page found].
++swap_out: i 0, store page in vaddr 0x5000 to disk swap entry 6
++swap_in: load disk swap entry 5 with swap_page in vadr 0x4000
++write Virt Page e in fifo_check_swap
++page fault at 0x00005000: K/W [no page found].
++swap_out: i 0, store page in vaddr 0x1000 to disk swap entry 2
++swap_in: load disk swap entry 6 with swap_page in vadr 0x5000
++write Virt Page a in fifo_check_swap
++page fault at 0x00001000: K/R [no page found].
++swap_out: i 0, store page in vaddr 0x2000 to disk swap entry 3
++swap_in: load disk swap entry 2 with swap_page in vadr 0x1000
++count is 0, total is 5
++check_swap() succeeded!
++++ setup timer interrupts
++this initproc, pid = 1, name = "init"
++To U: "Hello world!!".
++To U: "en.., Bye, Bye. :)"
++kernel panic at kern/process/proc.c:387:
++    process exit!!.
++
++stack trackback:
++ebp:0xc030df98   eip:0xc0100ab1 arg :0xc010a088 0xc030dfdc 0x00000183 0xc030dfcc
++    kern/debug/kdebug.c:309: print_stackframe+22
++ebp:0xc030dfc8   eip:0xc0100468 arg :0xc010bef9 0x00000183 0xc010bf0d 0xc012b044
++    kern/debug/panic.c:27: __panic+103
++ebp:0xc030dfe8   eip:0xc0109020 arg :0x00000000 0xc010bf8c 0x00000000 0x00000010
++    kern/process/proc.c:387: do_exit+33
++Welcome to the kernel debug monitor!!
++Type 'help' for a list of commands.
++K> 
+\ 文件尾没有换行符
+diff -ruP /home/xmh/origin/ucore_lab/labcodes/lab4/kern/debug/kdebug.c lab4/kern/debug/kdebug.c
+--- /home/xmh/origin/ucore_lab/labcodes/lab4/kern/debug/kdebug.c	2020-05-23 13:59:51.741663656 +0000
++++ lab4/kern/debug/kdebug.c	2020-05-23 14:05:31.831296059 +0000
+@@ -305,5 +305,18 @@
+       *           NOTICE: the calling funciton's return addr eip  = ss:[ebp+4]
+       *                   the calling funciton's ebp = ss:[ebp]
+       */
++    uint32_t ebp = read_ebp();
++    uint32_t eip = read_eip();
++    for (int i = 0; i < STACKFRAME_DEPTH && ebp != 0; i++)
++    {
++        cprintf("ebp:0x%08x   eip:0x%08x ", ebp, eip);
++        uint32_t *tmp = (uint32_t *)ebp + 2;
++        cprintf("arg :0x%08x 0x%08x 0x%08x 0x%08x", *(tmp + 0), *(tmp + 1), *(tmp + 2), *(tmp + 3));
++        cprintf("\n");
++        print_debuginfo(eip - 1);
++        eip = ((uint32_t *)ebp)[1];
++        ebp = ((uint32_t *)ebp)[0];
++    }
+ }
+ 
++
+diff -ruP /home/xmh/origin/ucore_lab/labcodes/lab4/kern/mm/default_pmm.c lab4/kern/mm/default_pmm.c
+--- /home/xmh/origin/ucore_lab/labcodes/lab4/kern/mm/default_pmm.c	2020-05-23 13:59:51.741663656 +0000
++++ lab4/kern/mm/default_pmm.c	2020-05-23 14:05:31.831296059 +0000
+@@ -99,16 +99,19 @@
+ #define nr_free (free_area.nr_free)
+ 
+ static void
+-default_init(void) {
++default_init(void)
++{
+     list_init(&free_list);
+     nr_free = 0;
+ }
+ 
+ static void
+-default_init_memmap(struct Page *base, size_t n) {
++default_init_memmap(struct Page *base, size_t n)
++{
+     assert(n > 0);
+     struct Page *p = base;
+-    for (; p != base + n; p ++) {
++    for (; p != base + n; p++)
++    {
+         assert(PageReserved(p));
+         p->flags = p->property = 0;
+         set_page_ref(p, 0);
+@@ -120,27 +123,34 @@
+ }
+ 
+ static struct Page *
+-default_alloc_pages(size_t n) {
++default_alloc_pages(size_t n)
++{
+     assert(n > 0);
+-    if (n > nr_free) {
++    if (n > nr_free)
++    {
+         return NULL;
+     }
+     struct Page *page = NULL;
+     list_entry_t *le = &free_list;
+-    while ((le = list_next(le)) != &free_list) {
++    while ((le = list_next(le)) != &free_list)
++    {
+         struct Page *p = le2page(le, page_link);
+-        if (p->property >= n) {
++        if (p->property >= n)
++        {
+             page = p;
+             break;
+         }
+     }
+-    if (page != NULL) {
+-        list_del(&(page->page_link));
+-        if (page->property > n) {
++    if (page != NULL)
++    {
++        if (page->property > n)
++        {
+             struct Page *p = page + n;
+             p->property = page->property - n;
+-            list_add(&free_list, &(p->page_link));
+-    }
++            SetPageProperty(p);
++            list_add_after(&(page->page_link), &(p->page_link));
++        }
++        list_del(&(page->page_link));
+         nr_free -= n;
+         ClearPageProperty(page);
+     }
+@@ -148,10 +158,12 @@
+ }
+ 
+ static void
+-default_free_pages(struct Page *base, size_t n) {
++default_free_pages(struct Page *base, size_t n)
++{
+     assert(n > 0);
+     struct Page *p = base;
+-    for (; p != base + n; p ++) {
++    for (; p != base + n; p++)
++    {
+         assert(!PageReserved(p) && !PageProperty(p));
+         p->flags = 0;
+         set_page_ref(p, 0);
+@@ -159,15 +171,18 @@
+     base->property = n;
+     SetPageProperty(base);
+     list_entry_t *le = list_next(&free_list);
+-    while (le != &free_list) {
++    while (le != &free_list)
++    {
+         p = le2page(le, page_link);
+         le = list_next(le);
+-        if (base + base->property == p) {
++        if (base + base->property == p)
++        {
+             base->property += p->property;
+             ClearPageProperty(p);
+             list_del(&(p->page_link));
+         }
+-        else if (p + p->property == base) {
++        else if (p + p->property == base)
++        {
+             p->property += base->property;
+             ClearPageProperty(base);
+             base = p;
+@@ -175,16 +190,24 @@
+         }
+     }
+     nr_free += n;
+-    list_add(&free_list, &(base->page_link));
++    for (le = list_next(&free_list); le != &free_list; le = list_next(le))
++    {
++        p = le2page(le, page_link);
++        if (base + base->property <= p)
++            break;
++    }
++    list_add_before(le, &(base->page_link));
+ }
+ 
+ static size_t
+-default_nr_free_pages(void) {
++default_nr_free_pages(void)
++{
+     return nr_free;
+ }
+ 
+ static void
+-basic_check(void) {
++basic_check(void)
++{
+     struct Page *p0, *p1, *p2;
+     p0 = p1 = p2 = NULL;
+     assert((p0 = alloc_page()) != NULL);
+@@ -234,16 +257,18 @@
+     free_page(p2);
+ }
+ 
+-// LAB2: below code is used to check the first fit allocation algorithm (your EXERCISE 1) 
++// LAB2: below code is used to check the first fit allocation algorithm (your EXERCISE 1)
+ // NOTICE: You SHOULD NOT CHANGE basic_check, default_check functions!
+ static void
+-default_check(void) {
++default_check(void)
++{
+     int count = 0, total = 0;
+     list_entry_t *le = &free_list;
+-    while ((le = list_next(le)) != &free_list) {
++    while ((le = list_next(le)) != &free_list)
++    {
+         struct Page *p = le2page(le, page_link);
+         assert(PageProperty(p));
+-        count ++, total += p->property;
++        count++, total += p->property;
+     }
+     assert(total == nr_free_pages());
+ 
+@@ -291,9 +316,10 @@
+     free_pages(p0, 5);
+ 
+     le = &free_list;
+-    while ((le = list_next(le)) != &free_list) {
++    while ((le = list_next(le)) != &free_list)
++    {
+         struct Page *p = le2page(le, page_link);
+-        count --, total -= p->property;
++        count--, total -= p->property;
+     }
+     assert(count == 0);
+     assert(total == 0);
+@@ -308,4 +334,3 @@
+     .nr_free_pages = default_nr_free_pages,
+     .check = default_check,
+ };
+-
+diff -ruP /home/xmh/origin/ucore_lab/labcodes/lab4/kern/mm/pmm.c lab4/kern/mm/pmm.c
+--- /home/xmh/origin/ucore_lab/labcodes/lab4/kern/mm/pmm.c	2020-05-23 13:59:51.741663656 +0000
++++ lab4/kern/mm/pmm.c	2020-05-23 14:05:31.831296059 +0000
+@@ -61,8 +61,8 @@
+  * always available at virtual address PGADDR(PDX(VPT), PDX(VPT), 0), to which
+  * vpd is set bellow.
+  * */
+-pte_t * const vpt = (pte_t *)VPT;
+-pde_t * const vpd = (pde_t *)PGADDR(PDX(VPT), PDX(VPT), 0);
++pte_t *const vpt = (pte_t *)VPT;
++pde_t *const vpd = (pde_t *)PGADDR(PDX(VPT), PDX(VPT), 0);
+ 
+ /* *
+  * Global Descriptor Table:
+@@ -83,12 +83,11 @@
+     [SEG_KDATA] = SEG(STA_W, 0x0, 0xFFFFFFFF, DPL_KERNEL),
+     [SEG_UTEXT] = SEG(STA_X | STA_R, 0x0, 0xFFFFFFFF, DPL_USER),
+     [SEG_UDATA] = SEG(STA_W, 0x0, 0xFFFFFFFF, DPL_USER),
+-    [SEG_TSS]   = SEG_NULL,
++    [SEG_TSS] = SEG_NULL,
+ };
+ 
+ static struct pseudodesc gdt_pd = {
+-    sizeof(gdt) - 1, (uintptr_t)gdt
+-};
++    sizeof(gdt) - 1, (uintptr_t)gdt};
+ 
+ static void check_alloc_page(void);
+ static void check_pgdir(void);
+@@ -99,15 +98,16 @@
+  * data/code segement registers for kernel.
+  * */
+ static inline void
+-lgdt(struct pseudodesc *pd) {
+-    asm volatile ("lgdt (%0)" :: "r" (pd));
+-    asm volatile ("movw %%ax, %%gs" :: "a" (USER_DS));
+-    asm volatile ("movw %%ax, %%fs" :: "a" (USER_DS));
+-    asm volatile ("movw %%ax, %%es" :: "a" (KERNEL_DS));
+-    asm volatile ("movw %%ax, %%ds" :: "a" (KERNEL_DS));
+-    asm volatile ("movw %%ax, %%ss" :: "a" (KERNEL_DS));
++lgdt(struct pseudodesc *pd)
++{
++    asm volatile("lgdt (%0)" ::"r"(pd));
++    asm volatile("movw %%ax, %%gs" ::"a"(USER_DS));
++    asm volatile("movw %%ax, %%fs" ::"a"(USER_DS));
++    asm volatile("movw %%ax, %%es" ::"a"(KERNEL_DS));
++    asm volatile("movw %%ax, %%ds" ::"a"(KERNEL_DS));
++    asm volatile("movw %%ax, %%ss" ::"a"(KERNEL_DS));
+     // reload cs
+-    asm volatile ("ljmp %0, $1f\n 1:\n" :: "i" (KERNEL_CS));
++    asm volatile("ljmp %0, $1f\n 1:\n" ::"i"(KERNEL_CS));
+ }
+ 
+ /* *
+@@ -115,14 +115,15 @@
+  * so that we can use different kernel stack when we trap frame
+  * user to kernel.
+  * */
+-void
+-load_esp0(uintptr_t esp0) {
++void load_esp0(uintptr_t esp0)
++{
+     ts.ts_esp0 = esp0;
+ }
+ 
+ /* gdt_init - initialize the default GDT and TSS */
+ static void
+-gdt_init(void) {
++gdt_init(void)
++{
+     // set boot kernel stack and default SS0
+     load_esp0((uintptr_t)bootstacktop);
+     ts.ts_ss0 = KERNEL_DS;
+@@ -139,45 +140,49 @@
+ 
+ //init_pmm_manager - initialize a pmm_manager instance
+ static void
+-init_pmm_manager(void) {
++init_pmm_manager(void)
++{
+     pmm_manager = &default_pmm_manager;
+     cprintf("memory management: %s\n", pmm_manager->name);
+     pmm_manager->init();
+ }
+ 
+-//init_memmap - call pmm->init_memmap to build Page struct for free memory  
++//init_memmap - call pmm->init_memmap to build Page struct for free memory
+ static void
+-init_memmap(struct Page *base, size_t n) {
++init_memmap(struct Page *base, size_t n)
++{
+     pmm_manager->init_memmap(base, n);
+ }
+ 
+-//alloc_pages - call pmm->alloc_pages to allocate a continuous n*PAGESIZE memory 
++//alloc_pages - call pmm->alloc_pages to allocate a continuous n*PAGESIZE memory
+ struct Page *
+-alloc_pages(size_t n) {
+-    struct Page *page=NULL;
++alloc_pages(size_t n)
++{
++    struct Page *page = NULL;
+     bool intr_flag;
+-    
++
+     while (1)
+     {
+-         local_intr_save(intr_flag);
+-         {
+-              page = pmm_manager->alloc_pages(n);
+-         }
+-         local_intr_restore(intr_flag);
+-
+-         if (page != NULL || n > 1 || swap_init_ok == 0) break;
+-         
+-         extern struct mm_struct *check_mm_struct;
+-         //cprintf("page %x, call swap_out in alloc_pages %d\n",page, n);
+-         swap_out(check_mm_struct, n, 0);
++        local_intr_save(intr_flag);
++        {
++            page = pmm_manager->alloc_pages(n);
++        }
++        local_intr_restore(intr_flag);
++
++        if (page != NULL || n > 1 || swap_init_ok == 0)
++            break;
++
++        extern struct mm_struct *check_mm_struct;
++        //cprintf("page %x, call swap_out in alloc_pages %d\n",page, n);
++        swap_out(check_mm_struct, n, 0);
+     }
+     //cprintf("n %d,get page %x, No %d in alloc_pages\n",n,page,(page-pages));
+     return page;
+ }
+ 
+-//free_pages - call pmm->free_pages to free a continuous n*PAGESIZE memory 
+-void
+-free_pages(struct Page *base, size_t n) {
++//free_pages - call pmm->free_pages to free a continuous n*PAGESIZE memory
++void free_pages(struct Page *base, size_t n)
++{
+     bool intr_flag;
+     local_intr_save(intr_flag);
+     {
+@@ -186,10 +191,11 @@
+     local_intr_restore(intr_flag);
+ }
+ 
+-//nr_free_pages - call pmm->nr_free_pages to get the size (nr*PAGESIZE) 
++//nr_free_pages - call pmm->nr_free_pages to get the size (nr*PAGESIZE)
+ //of current free memory
+ size_t
+-nr_free_pages(void) {
++nr_free_pages(void)
++{
+     size_t ret;
+     bool intr_flag;
+     local_intr_save(intr_flag);
+@@ -202,23 +208,28 @@
+ 
+ /* pmm_init - initialize the physical memory management */
+ static void
+-page_init(void) {
++page_init(void)
++{
+     struct e820map *memmap = (struct e820map *)(0x8000 + KERNBASE);
+     uint64_t maxpa = 0;
+ 
+     cprintf("e820map:\n");
+     int i;
+-    for (i = 0; i < memmap->nr_map; i ++) {
++    for (i = 0; i < memmap->nr_map; i++)
++    {
+         uint64_t begin = memmap->map[i].addr, end = begin + memmap->map[i].size;
+         cprintf("  memory: %08llx, [%08llx, %08llx], type = %d.\n",
+                 memmap->map[i].size, begin, end - 1, memmap->map[i].type);
+-        if (memmap->map[i].type == E820_ARM) {
+-            if (maxpa < end && begin < KMEMSIZE) {
++        if (memmap->map[i].type == E820_ARM)
++        {
++            if (maxpa < end && begin < KMEMSIZE)
++            {
+                 maxpa = end;
+             }
+         }
+     }
+-    if (maxpa > KMEMSIZE) {
++    if (maxpa > KMEMSIZE)
++    {
+         maxpa = KMEMSIZE;
+     }
+ 
+@@ -227,25 +238,32 @@
+     npage = maxpa / PGSIZE;
+     pages = (struct Page *)ROUNDUP((void *)end, PGSIZE);
+ 
+-    for (i = 0; i < npage; i ++) {
++    for (i = 0; i < npage; i++)
++    {
+         SetPageReserved(pages + i);
+     }
+ 
+     uintptr_t freemem = PADDR((uintptr_t)pages + sizeof(struct Page) * npage);
+ 
+-    for (i = 0; i < memmap->nr_map; i ++) {
++    for (i = 0; i < memmap->nr_map; i++)
++    {
+         uint64_t begin = memmap->map[i].addr, end = begin + memmap->map[i].size;
+-        if (memmap->map[i].type == E820_ARM) {
+-            if (begin < freemem) {
++        if (memmap->map[i].type == E820_ARM)
++        {
++            if (begin < freemem)
++            {
+                 begin = freemem;
+             }
+-            if (end > KMEMSIZE) {
++            if (end > KMEMSIZE)
++            {
+                 end = KMEMSIZE;
+             }
+-            if (begin < end) {
++            if (begin < end)
++            {
+                 begin = ROUNDUP(begin, PGSIZE);
+                 end = ROUNDDOWN(end, PGSIZE);
+-                if (begin < end) {
++                if (begin < end)
++                {
+                     init_memmap(pa2page(begin), (end - begin) / PGSIZE);
+                 }
+             }
+@@ -258,43 +276,47 @@
+ //  la:   linear address of this memory need to map (after x86 segment map)
+ //  size: memory size
+ //  pa:   physical address of this memory
+-//  perm: permission of this memory  
++//  perm: permission of this memory
+ static void
+-boot_map_segment(pde_t *pgdir, uintptr_t la, size_t size, uintptr_t pa, uint32_t perm) {
++boot_map_segment(pde_t *pgdir, uintptr_t la, size_t size, uintptr_t pa, uint32_t perm)
++{
+     assert(PGOFF(la) == PGOFF(pa));
+     size_t n = ROUNDUP(size + PGOFF(la), PGSIZE) / PGSIZE;
+     la = ROUNDDOWN(la, PGSIZE);
+     pa = ROUNDDOWN(pa, PGSIZE);
+-    for (; n > 0; n --, la += PGSIZE, pa += PGSIZE) {
++    for (; n > 0; n--, la += PGSIZE, pa += PGSIZE)
++    {
+         pte_t *ptep = get_pte(pgdir, la, 1);
+         assert(ptep != NULL);
+         *ptep = pa | PTE_P | perm;
+     }
+ }
+ 
+-//boot_alloc_page - allocate one page using pmm->alloc_pages(1) 
++//boot_alloc_page - allocate one page using pmm->alloc_pages(1)
+ // return value: the kernel virtual address of this allocated page
+ //note: this function is used to get the memory for PDT(Page Directory Table)&PT(Page Table)
+ static void *
+-boot_alloc_page(void) {
++boot_alloc_page(void)
++{
+     struct Page *p = alloc_page();
+-    if (p == NULL) {
++    if (p == NULL)
++    {
+         panic("boot_alloc_page failed.\n");
+     }
+     return page2kva(p);
+ }
+ 
+-//pmm_init - setup a pmm to manage physical memory, build PDT&PT to setup paging mechanism 
++//pmm_init - setup a pmm to manage physical memory, build PDT&PT to setup paging mechanism
+ //         - check the correctness of pmm & paging mechanism, print PDT&PT
+-void
+-pmm_init(void) {
++void pmm_init(void)
++{
+     // We've already enabled paging
+     boot_cr3 = PADDR(boot_pgdir);
+ 
+-    //We need to alloc/free the physical memory (granularity is 4KB or other size). 
++    //We need to alloc/free the physical memory (granularity is 4KB or other size).
+     //So a framework of physical memory manager (struct pmm_manager)is defined in pmm.h
+     //First we should init a physical memory manager(pmm) based on the framework.
+-    //Then pmm can alloc/free the physical memory. 
++    //Then pmm can alloc/free the physical memory.
+     //Now the first_fit/best_fit/worst_fit/buddy_system pmm are available.
+     init_pmm_manager();
+ 
+@@ -341,7 +363,8 @@
+ //  create: a logical value to decide if alloc a page for PT
+ // return vaule: the kernel virtual address of this pte
+ pte_t *
+-get_pte(pde_t *pgdir, uintptr_t la, bool create) {
++get_pte(pde_t *pgdir, uintptr_t la, bool create)
++{
+     /* LAB2 EXERCISE 2: YOUR CODE
+      *
+      * If you need to visit a physical address, please use KADDR()
+@@ -375,16 +398,33 @@
+     }
+     return NULL;          // (8) return page table entry
+ #endif
++    pde_t *pdep = &pgdir[PDX(la)];
++    if (!(*pdep & PTE_P))
++    {
++        struct Page *page;
++        if (!create || (page = alloc_page()) == NULL)
++        {
++            return NULL;
++        }
++        set_page_ref(page, 1);
++        uintptr_t pa = page2pa(page);
++        memset(KADDR(pa), 0, PGSIZE);
++        *pdep = pa | PTE_U | PTE_W | PTE_P;
++    }
++    return &((pte_t *)KADDR(PDE_ADDR(*pdep)))[PTX(la)];
+ }
+ 
+ //get_page - get related Page struct for linear address la using PDT pgdir
+ struct Page *
+-get_page(pde_t *pgdir, uintptr_t la, pte_t **ptep_store) {
++get_page(pde_t *pgdir, uintptr_t la, pte_t **ptep_store)
++{
+     pte_t *ptep = get_pte(pgdir, la, 0);
+-    if (ptep_store != NULL) {
++    if (ptep_store != NULL)
++    {
+         *ptep_store = ptep;
+     }
+-    if (ptep != NULL && *ptep & PTE_P) {
++    if (ptep != NULL && *ptep & PTE_P)
++    {
+         return pte2page(*ptep);
+     }
+     return NULL;
+@@ -392,9 +432,10 @@
+ 
+ //page_remove_pte - free an Page sturct which is related linear address la
+ //                - and clean(invalidate) pte which is related linear address la
+-//note: PT is changed, so the TLB need to be invalidate 
++//note: PT is changed, so the TLB need to be invalidate
+ static inline void
+-page_remove_pte(pde_t *pgdir, uintptr_t la, pte_t *ptep) {
++page_remove_pte(pde_t *pgdir, uintptr_t la, pte_t *ptep)
++{
+     /* LAB2 EXERCISE 3: YOUR CODE
+      *
+      * Please check if ptep is valid, and tlb must be manually updated if mapping is updated
+@@ -420,13 +461,24 @@
+                                   //(6) flush tlb
+     }
+ #endif
++    if (*ptep & PTE_P)
++    {
++        struct Page *page = pte2page(*ptep);
++        if (page_ref_dec(page) == 0)
++        {
++            free_page(page);
++        }
++        *ptep = 0;
++        tlb_invalidate(pgdir, la);
++    }
+ }
+ 
+ //page_remove - free an Page which is related linear address la and has an validated pte
+-void
+-page_remove(pde_t *pgdir, uintptr_t la) {
++void page_remove(pde_t *pgdir, uintptr_t la)
++{
+     pte_t *ptep = get_pte(pgdir, la, 0);
+-    if (ptep != NULL) {
++    if (ptep != NULL)
++    {
+         page_remove_pte(pgdir, la, ptep);
+     }
+ }
+@@ -438,20 +490,24 @@
+ //  la:    the linear address need to map
+ //  perm:  the permission of this Page which is setted in related pte
+ // return value: always 0
+-//note: PT is changed, so the TLB need to be invalidate 
+-int
+-page_insert(pde_t *pgdir, struct Page *page, uintptr_t la, uint32_t perm) {
++//note: PT is changed, so the TLB need to be invalidate
++int page_insert(pde_t *pgdir, struct Page *page, uintptr_t la, uint32_t perm)
++{
+     pte_t *ptep = get_pte(pgdir, la, 1);
+-    if (ptep == NULL) {
++    if (ptep == NULL)
++    {
+         return -E_NO_MEM;
+     }
+     page_ref_inc(page);
+-    if (*ptep & PTE_P) {
++    if (*ptep & PTE_P)
++    {
+         struct Page *p = pte2page(*ptep);
+-        if (p == page) {
++        if (p == page)
++        {
+             page_ref_dec(page);
+         }
+-        else {
++        else
++        {
+             page_remove_pte(pgdir, la, ptep);
+         }
+     }
+@@ -462,44 +518,50 @@
+ 
+ // invalidate a TLB entry, but only if the page tables being
+ // edited are the ones currently in use by the processor.
+-void
+-tlb_invalidate(pde_t *pgdir, uintptr_t la) {
+-    if (rcr3() == PADDR(pgdir)) {
++void tlb_invalidate(pde_t *pgdir, uintptr_t la)
++{
++    if (rcr3() == PADDR(pgdir))
++    {
+         invlpg((void *)la);
+     }
+ }
+ 
+-// pgdir_alloc_page - call alloc_page & page_insert functions to 
++// pgdir_alloc_page - call alloc_page & page_insert functions to
+ //                  - allocate a page size memory & setup an addr map
+ //                  - pa<->la with linear address la and the PDT pgdir
+ struct Page *
+-pgdir_alloc_page(pde_t *pgdir, uintptr_t la, uint32_t perm) {
++pgdir_alloc_page(pde_t *pgdir, uintptr_t la, uint32_t perm)
++{
+     struct Page *page = alloc_page();
+-    if (page != NULL) {
+-        if (page_insert(pgdir, page, la, perm) != 0) {
++    if (page != NULL)
++    {
++        if (page_insert(pgdir, page, la, perm) != 0)
++        {
+             free_page(page);
+             return NULL;
+         }
+-        if (swap_init_ok){
++        if (swap_init_ok)
++        {
+             swap_map_swappable(check_mm_struct, la, page, 0);
+-            page->pra_vaddr=la;
++            page->pra_vaddr = la;
+             assert(page_ref(page) == 1);
+             //cprintf("get No. %d  page: pra_vaddr %x, pra_link.prev %x, pra_link_next %x in pgdir_alloc_page\n", (page-pages), page->pra_vaddr,page->pra_page_link.prev, page->pra_page_link.next);
+         }
+-
+     }
+ 
+     return page;
+ }
+ 
+ static void
+-check_alloc_page(void) {
++check_alloc_page(void)
++{
+     pmm_manager->check();
+     cprintf("check_alloc_page() succeeded!\n");
+ }
+ 
+ static void
+-check_pgdir(void) {
++check_pgdir(void)
++{
+     assert(npage <= KMEMSIZE / PGSIZE);
+     assert(boot_pgdir != NULL && (uint32_t)PGOFF(boot_pgdir) == 0);
+     assert(get_page(boot_pgdir, 0x0, NULL) == NULL);
+@@ -547,10 +609,12 @@
+ }
+ 
+ static void
+-check_boot_pgdir(void) {
++check_boot_pgdir(void)
++{
+     pte_t *ptep;
+     int i;
+-    for (i = 0; i < npage; i += PGSIZE) {
++    for (i = 0; i < npage; i += PGSIZE)
++    {
+         assert((ptep = get_pte(boot_pgdir, (uintptr_t)KADDR(i), 0)) != NULL);
+         assert(PTE_ADDR(*ptep) == i);
+     }
+@@ -582,7 +646,8 @@
+ 
+ //perm2str - use string 'u,r,w,-' to present the permission
+ static const char *
+-perm2str(int perm) {
++perm2str(int perm)
++{
+     static char str[4];
+     str[0] = (perm & PTE_U) ? 'u' : '-';
+     str[1] = 'r';
+@@ -601,24 +666,31 @@
+ //  table:       the beginning addr of table
+ //  left_store:  the pointer of the high side of table's next range
+ //  right_store: the pointer of the low side of table's next range
+-// return value: 0 - not a invalid item range, perm - a valid item range with perm permission 
++// return value: 0 - not a invalid item range, perm - a valid item range with perm permission
+ static int
+-get_pgtable_items(size_t left, size_t right, size_t start, uintptr_t *table, size_t *left_store, size_t *right_store) {
+-    if (start >= right) {
++get_pgtable_items(size_t left, size_t right, size_t start, uintptr_t *table, size_t *left_store, size_t *right_store)
++{
++    if (start >= right)
++    {
+         return 0;
+     }
+-    while (start < right && !(table[start] & PTE_P)) {
+-        start ++;
++    while (start < right && !(table[start] & PTE_P))
++    {
++        start++;
+     }
+-    if (start < right) {
+-        if (left_store != NULL) {
++    if (start < right)
++    {
++        if (left_store != NULL)
++        {
+             *left_store = start;
+         }
+-        int perm = (table[start ++] & PTE_USER);
+-        while (start < right && (table[start] & PTE_USER) == perm) {
+-            start ++;
++        int perm = (table[start++] & PTE_USER);
++        while (start < right && (table[start] & PTE_USER) == perm)
++        {
++            start++;
+         }
+-        if (right_store != NULL) {
++        if (right_store != NULL)
++        {
+             *right_store = start;
+         }
+         return perm;
+@@ -627,15 +699,17 @@
+ }
+ 
+ //print_pgdir - print the PDT&PT
+-void
+-print_pgdir(void) {
++void print_pgdir(void)
++{
+     cprintf("-------------------- BEGIN --------------------\n");
+     size_t left, right = 0, perm;
+-    while ((perm = get_pgtable_items(0, NPDEENTRY, right, vpd, &left, &right)) != 0) {
++    while ((perm = get_pgtable_items(0, NPDEENTRY, right, vpd, &left, &right)) != 0)
++    {
+         cprintf("PDE(%03x) %08x-%08x %08x %s\n", right - left,
+                 left * PTSIZE, right * PTSIZE, (right - left) * PTSIZE, perm2str(perm));
+         size_t l, r = left * NPTEENTRY;
+-        while ((perm = get_pgtable_items(left * NPTEENTRY, right * NPTEENTRY, r, vpt, &l, &r)) != 0) {
++        while ((perm = get_pgtable_items(left * NPTEENTRY, right * NPTEENTRY, r, vpt, &l, &r)) != 0)
++        {
+             cprintf("  |-- PTE(%05x) %08x-%08x %08x %s\n", r - l,
+                     l * PGSIZE, r * PGSIZE, (r - l) * PGSIZE, perm2str(perm));
+         }
+diff -ruP /home/xmh/origin/ucore_lab/labcodes/lab4/kern/mm/swap_fifo.c lab4/kern/mm/swap_fifo.c
+--- /home/xmh/origin/ucore_lab/labcodes/lab4/kern/mm/swap_fifo.c	2020-05-23 13:59:51.741663656 +0000
++++ lab4/kern/mm/swap_fifo.c	2020-05-23 14:05:31.831296059 +0000
+@@ -32,11 +32,11 @@
+  */
+ static int
+ _fifo_init_mm(struct mm_struct *mm)
+-{     
+-     list_init(&pra_list_head);
+-     mm->sm_priv = &pra_list_head;
+-     //cprintf(" mm->sm_priv %x in fifo_init_mm\n",mm->sm_priv);
+-     return 0;
++{
++    list_init(&pra_list_head);
++    mm->sm_priv = &pra_list_head;
++    //cprintf(" mm->sm_priv %x in fifo_init_mm\n",mm->sm_priv);
++    return 0;
+ }
+ /*
+  * (3)_fifo_map_swappable: According FIFO PRA, we should link the most recent arrival page at the back of pra_list_head qeueue
+@@ -44,13 +44,14 @@
+ static int
+ _fifo_map_swappable(struct mm_struct *mm, uintptr_t addr, struct Page *page, int swap_in)
+ {
+-    list_entry_t *head=(list_entry_t*) mm->sm_priv;
+-    list_entry_t *entry=&(page->pra_page_link);
+- 
++    list_entry_t *head = (list_entry_t *)mm->sm_priv;
++    list_entry_t *entry = &(page->pra_page_link);
++
+     assert(entry != NULL && head != NULL);
+     //record the page access situlation
+-    /*LAB3 EXERCISE 2: YOUR CODE*/ 
++    /*LAB3 EXERCISE 2: YOUR CODE*/
+     //(1)link the most recent arrival page at the back of the pra_list_head qeueue.
++    list_add(head, entry);
+     return 0;
+ }
+ /*
+@@ -58,61 +59,65 @@
+  *                            then assign the value of *ptr_page to the addr of this page.
+  */
+ static int
+-_fifo_swap_out_victim(struct mm_struct *mm, struct Page ** ptr_page, int in_tick)
++_fifo_swap_out_victim(struct mm_struct *mm, struct Page **ptr_page, int in_tick)
+ {
+-     list_entry_t *head=(list_entry_t*) mm->sm_priv;
+-         assert(head != NULL);
+-     assert(in_tick==0);
+-     /* Select the victim */
+-     /*LAB3 EXERCISE 2: YOUR CODE*/ 
+-     //(1)  unlink the  earliest arrival page in front of pra_list_head qeueue
+-     //(2)  assign the value of *ptr_page to the addr of this page
+-     return 0;
++    list_entry_t *head = (list_entry_t *)mm->sm_priv;
++    assert(head != NULL);
++    assert(in_tick == 0);
++    /* Select the victim */
++    /*LAB3 EXERCISE 2: YOUR CODE*/
++    //(1)  unlink the  earliest arrival page in front of pra_list_head qeueue
++    //(2)  assign the value of *ptr_page to the addr of this page
++    list_entry_t *le = head->prev;
++    struct Page *p = le2page(le, pra_page_link);
++    list_del(le);
++    *ptr_page = p;
++    return 0;
+ }
+ 
+ static int
+-_fifo_check_swap(void) {
++_fifo_check_swap(void)
++{
+     cprintf("write Virt Page c in fifo_check_swap\n");
+     *(unsigned char *)0x3000 = 0x0c;
+-    assert(pgfault_num==4);
++    assert(pgfault_num == 4);
+     cprintf("write Virt Page a in fifo_check_swap\n");
+     *(unsigned char *)0x1000 = 0x0a;
+-    assert(pgfault_num==4);
++    assert(pgfault_num == 4);
+     cprintf("write Virt Page d in fifo_check_swap\n");
+     *(unsigned char *)0x4000 = 0x0d;
+-    assert(pgfault_num==4);
++    assert(pgfault_num == 4);
+     cprintf("write Virt Page b in fifo_check_swap\n");
+     *(unsigned char *)0x2000 = 0x0b;
+-    assert(pgfault_num==4);
++    assert(pgfault_num == 4);
+     cprintf("write Virt Page e in fifo_check_swap\n");
+     *(unsigned char *)0x5000 = 0x0e;
+-    assert(pgfault_num==5);
++    assert(pgfault_num == 5);
+     cprintf("write Virt Page b in fifo_check_swap\n");
+     *(unsigned char *)0x2000 = 0x0b;
+-    assert(pgfault_num==5);
++    assert(pgfault_num == 5);
+     cprintf("write Virt Page a in fifo_check_swap\n");
+     *(unsigned char *)0x1000 = 0x0a;
+-    assert(pgfault_num==6);
++    assert(pgfault_num == 6);
+     cprintf("write Virt Page b in fifo_check_swap\n");
+     *(unsigned char *)0x2000 = 0x0b;
+-    assert(pgfault_num==7);
++    assert(pgfault_num == 7);
+     cprintf("write Virt Page c in fifo_check_swap\n");
+     *(unsigned char *)0x3000 = 0x0c;
+-    assert(pgfault_num==8);
++    assert(pgfault_num == 8);
+     cprintf("write Virt Page d in fifo_check_swap\n");
+     *(unsigned char *)0x4000 = 0x0d;
+-    assert(pgfault_num==9);
++    assert(pgfault_num == 9);
+     cprintf("write Virt Page e in fifo_check_swap\n");
+     *(unsigned char *)0x5000 = 0x0e;
+-    assert(pgfault_num==10);
++    assert(pgfault_num == 10);
+     cprintf("write Virt Page a in fifo_check_swap\n");
+     assert(*(unsigned char *)0x1000 == 0x0a);
+     *(unsigned char *)0x1000 = 0x0a;
+-    assert(pgfault_num==11);
++    assert(pgfault_num == 11);
+     return 0;
+ }
+ 
+-
+ static int
+ _fifo_init(void)
+ {
+@@ -127,17 +132,18 @@
+ 
+ static int
+ _fifo_tick_event(struct mm_struct *mm)
+-{ return 0; }
+-
++{
++    return 0;
++}
+ 
+ struct swap_manager swap_manager_fifo =
+-{
+-     .name            = "fifo swap manager",
+-     .init            = &_fifo_init,
+-     .init_mm         = &_fifo_init_mm,
+-     .tick_event      = &_fifo_tick_event,
+-     .map_swappable   = &_fifo_map_swappable,
+-     .set_unswappable = &_fifo_set_unswappable,
+-     .swap_out_victim = &_fifo_swap_out_victim,
+-     .check_swap      = &_fifo_check_swap,
++    {
++        .name = "fifo swap manager",
++        .init = &_fifo_init,
++        .init_mm = &_fifo_init_mm,
++        .tick_event = &_fifo_tick_event,
++        .map_swappable = &_fifo_map_swappable,
++        .set_unswappable = &_fifo_set_unswappable,
++        .swap_out_victim = &_fifo_swap_out_victim,
++        .check_swap = &_fifo_check_swap,
+ };
+diff -ruP /home/xmh/origin/ucore_lab/labcodes/lab4/kern/mm/vmm.c lab4/kern/mm/vmm.c
+--- /home/xmh/origin/ucore_lab/labcodes/lab4/kern/mm/vmm.c	2020-05-23 13:59:51.745663724 +0000
++++ lab4/kern/mm/vmm.c	2020-05-23 14:05:31.835296124 +0000
+@@ -41,27 +41,33 @@
+ 
+ // mm_create -  alloc a mm_struct & initialize it.
+ struct mm_struct *
+-mm_create(void) {
++mm_create(void)
++{
+     struct mm_struct *mm = kmalloc(sizeof(struct mm_struct));
+ 
+-    if (mm != NULL) {
++    if (mm != NULL)
++    {
+         list_init(&(mm->mmap_list));
+         mm->mmap_cache = NULL;
+         mm->pgdir = NULL;
+         mm->map_count = 0;
+ 
+-        if (swap_init_ok) swap_init_mm(mm);
+-        else mm->sm_priv = NULL;
++        if (swap_init_ok)
++            swap_init_mm(mm);
++        else
++            mm->sm_priv = NULL;
+     }
+     return mm;
+ }
+ 
+ // vma_create - alloc a vma_struct & initialize it. (addr range: vm_start~vm_end)
+ struct vma_struct *
+-vma_create(uintptr_t vm_start, uintptr_t vm_end, uint32_t vm_flags) {
++vma_create(uintptr_t vm_start, uintptr_t vm_end, uint32_t vm_flags)
++{
+     struct vma_struct *vma = kmalloc(sizeof(struct vma_struct));
+ 
+-    if (vma != NULL) {
++    if (vma != NULL)
++    {
+         vma->vm_start = vm_start;
+         vma->vm_end = vm_end;
+         vma->vm_flags = vm_flags;
+@@ -171,7 +177,8 @@
+ }
+ 
+ static void
+-check_vma_struct(void) {
++check_vma_struct(void)
++{
+     size_t nr_free_pages_store = nr_free_pages();
+ 
+     struct mm_struct *mm = mm_create();
+@@ -180,13 +187,15 @@
+     int step1 = 10, step2 = step1 * 10;
+ 
+     int i;
+-    for (i = step1; i >= 1; i --) {
++    for (i = step1; i >= 1; i--)
++    {
+         struct vma_struct *vma = vma_create(i * 5, i * 5 + 2, 0);
+         assert(vma != NULL);
+         insert_vma_struct(mm, vma);
+     }
+ 
+-    for (i = step1 + 1; i <= step2; i ++) {
++    for (i = step1 + 1; i <= step2; i++)
++    {
+         struct vma_struct *vma = vma_create(i * 5, i * 5 + 2, 0);
+         assert(vma != NULL);
+         insert_vma_struct(mm, vma);
+@@ -194,33 +203,37 @@
+ 
+     list_entry_t *le = list_next(&(mm->mmap_list));
+ 
+-    for (i = 1; i <= step2; i ++) {
++    for (i = 1; i <= step2; i++)
++    {
+         assert(le != &(mm->mmap_list));
+         struct vma_struct *mmap = le2vma(le, list_link);
+         assert(mmap->vm_start == i * 5 && mmap->vm_end == i * 5 + 2);
+         le = list_next(le);
+     }
+ 
+-    for (i = 5; i <= 5 * step2; i +=5) {
++    for (i = 5; i <= 5 * step2; i += 5)
++    {
+         struct vma_struct *vma1 = find_vma(mm, i);
+         assert(vma1 != NULL);
+-        struct vma_struct *vma2 = find_vma(mm, i+1);
++        struct vma_struct *vma2 = find_vma(mm, i + 1);
+         assert(vma2 != NULL);
+-        struct vma_struct *vma3 = find_vma(mm, i+2);
++        struct vma_struct *vma3 = find_vma(mm, i + 2);
+         assert(vma3 == NULL);
+-        struct vma_struct *vma4 = find_vma(mm, i+3);
++        struct vma_struct *vma4 = find_vma(mm, i + 3);
+         assert(vma4 == NULL);
+-        struct vma_struct *vma5 = find_vma(mm, i+4);
++        struct vma_struct *vma5 = find_vma(mm, i + 4);
+         assert(vma5 == NULL);
+ 
+-        assert(vma1->vm_start == i  && vma1->vm_end == i  + 2);
+-        assert(vma2->vm_start == i  && vma2->vm_end == i  + 2);
++        assert(vma1->vm_start == i && vma1->vm_end == i + 2);
++        assert(vma2->vm_start == i && vma2->vm_end == i + 2);
+     }
+ 
+-    for (i =4; i>=0; i--) {
+-        struct vma_struct *vma_below_5= find_vma(mm,i);
+-        if (vma_below_5 != NULL ) {
+-           cprintf("vma_below_5: i %x, start %x, end %x\n",i, vma_below_5->vm_start, vma_below_5->vm_end); 
++    for (i = 4; i >= 0; i--)
++    {
++        struct vma_struct *vma_below_5 = find_vma(mm, i);
++        if (vma_below_5 != NULL)
++        {
++            cprintf("vma_below_5: i %x, start %x, end %x\n", i, vma_below_5->vm_start, vma_below_5->vm_end);
+         }
+         assert(vma_below_5 == NULL);
+     }
+@@ -234,7 +247,8 @@
+ 
+ // check_pgfault - check correctness of pgfault handler
+ static void
+-check_pgfault(void) {
++check_pgfault(void)
++{
+     size_t nr_free_pages_store = nr_free_pages();
+ 
+     check_mm_struct = mm_create();
+@@ -253,11 +267,13 @@
+     assert(find_vma(mm, addr) == vma);
+ 
+     int i, sum = 0;
+-    for (i = 0; i < 100; i ++) {
++    for (i = 0; i < 100; i++)
++    {
+         *(char *)(addr + i) = i;
+         sum += i;
+     }
+-    for (i = 0; i < 100; i ++) {
++    for (i = 0; i < 100; i++)
++    {
+         sum -= *(char *)(addr + i);
+     }
+     assert(sum == 0);
+@@ -275,7 +291,7 @@
+     cprintf("check_pgfault() succeeded!\n");
+ }
+ //page fault number
+-volatile unsigned int pgfault_num=0;
++volatile unsigned int pgfault_num = 0;
+ 
+ /* do_pgfault - interrupt handler to process the page fault execption
+  * @mm         : the control struct for a set of vma using the same PDT
+@@ -298,24 +314,27 @@
+  *         -- The U/S flag (bit 2) indicates whether the processor was executing at user mode (1)
+  *            or supervisor mode (0) at the time of the exception.
+  */
+-int
+-do_pgfault(struct mm_struct *mm, uint32_t error_code, uintptr_t addr) {
++int do_pgfault(struct mm_struct *mm, uint32_t error_code, uintptr_t addr)
++{
+     int ret = -E_INVAL;
+     //try to find a vma which include addr
+     struct vma_struct *vma = find_vma(mm, addr);
+ 
+     pgfault_num++;
+     //If the addr is in the range of a mm's vma?
+-    if (vma == NULL || vma->vm_start > addr) {
++    if (vma == NULL || vma->vm_start > addr)
++    {
+         cprintf("not valid addr %x, and  can not find it in vma\n", addr);
+         goto failed;
+     }
+     //check the error_code
+-    switch (error_code & 3) {
++    switch (error_code & 3)
++    {
+     default:
+-            /* error code flag : default is 3 ( W/R=1, P=1): write, present */
++        /* error code flag : default is 3 ( W/R=1, P=1): write, present */
+     case 2: /* error code flag : (W/R=1, P=0): write, not present */
+-        if (!(vma->vm_flags & VM_WRITE)) {
++        if (!(vma->vm_flags & VM_WRITE))
++        {
+             cprintf("do_pgfault failed: error code flag = write AND not present, but the addr's vma cannot write\n");
+             goto failed;
+         }
+@@ -324,7 +343,8 @@
+         cprintf("do_pgfault failed: error code flag = read AND present\n");
+         goto failed;
+     case 0: /* error code flag : (W/R=0, P=0): read, not present */
+-        if (!(vma->vm_flags & (VM_READ | VM_EXEC))) {
++        if (!(vma->vm_flags & (VM_READ | VM_EXEC)))
++        {
+             cprintf("do_pgfault failed: error code flag = read AND not present, but the addr's vma cannot read or exec\n");
+             goto failed;
+         }
+@@ -336,14 +356,15 @@
+      *    continue process
+      */
+     uint32_t perm = PTE_U;
+-    if (vma->vm_flags & VM_WRITE) {
++    if (vma->vm_flags & VM_WRITE)
++    {
+         perm |= PTE_W;
+     }
+     addr = ROUNDDOWN(addr, PGSIZE);
+ 
+     ret = -E_NO_MEM;
+ 
+-    pte_t *ptep=NULL;
++    pte_t *ptep = NULL;
+     /*LAB3 EXERCISE 1: YOUR CODE
+     * Maybe you want help comment, BELOW comments can help you finish the code
+     *
+@@ -393,8 +414,43 @@
+         }
+    }
+ #endif
+-   ret = 0;
++    ptep = get_pte(mm->pgdir, addr, 1);
++    if (ptep == NULL)
++    {
++        cprintf("get_pte failed\n");
++        goto failed;
++    }
++
++    if (*ptep == 0)
++    {
++        struct Page *page = pgdir_alloc_page(mm->pgdir, addr, perm);
++        if (page == NULL)
++        {
++            cprintf("pgdir_alloc_page failed\n");
++            goto failed;
++        }
++    }
++    else
++    {
++        if (swap_init_ok)
++        {
++            struct Page *page = NULL;
++            if ((ret = swap_in(mm, addr, &page)) != 0)
++            {
++                cprintf("swap_in failed\n");
++                goto failed;
++            }
++            page_insert(mm->pgdir, page, addr, perm);
++            swap_map_swappable(mm, addr, page, 1);
++            page->pra_vaddr = addr;
++        }
++        else
++        {
++            cprintf("no swap_init_ok but ptep is %x, failed\n", *ptep);
++            goto failed;
++        }
++    }
++    ret = 0;
+ failed:
+     return ret;
+ }
+-
+diff -ruP /home/xmh/origin/ucore_lab/labcodes/lab4/kern/mm/vmm.c.orig lab4/kern/mm/vmm.c.orig
+--- /home/xmh/origin/ucore_lab/labcodes/lab4/kern/mm/vmm.c.orig	1970-01-01 00:00:00.000000000 +0000
++++ lab4/kern/mm/vmm.c.orig	2020-05-23 01:53:25.601018244 +0000
+@@ -0,0 +1,400 @@
++#include <vmm.h>
++#include <sync.h>
++#include <string.h>
++#include <assert.h>
++#include <stdio.h>
++#include <error.h>
++#include <pmm.h>
++#include <x86.h>
++#include <swap.h>
++#include <kmalloc.h>
++
++/* 
++  vmm design include two parts: mm_struct (mm) & vma_struct (vma)
++  mm is the memory manager for the set of continuous virtual memory  
++  area which have the same PDT. vma is a continuous virtual memory area.
++  There a linear link list for vma & a redblack link list for vma in mm.
++---------------
++  mm related functions:
++   golbal functions
++     struct mm_struct * mm_create(void)
++     void mm_destroy(struct mm_struct *mm)
++     int do_pgfault(struct mm_struct *mm, uint32_t error_code, uintptr_t addr)
++--------------
++  vma related functions:
++   global functions
++     struct vma_struct * vma_create (uintptr_t vm_start, uintptr_t vm_end,...)
++     void insert_vma_struct(struct mm_struct *mm, struct vma_struct *vma)
++     struct vma_struct * find_vma(struct mm_struct *mm, uintptr_t addr)
++   local functions
++     inline void check_vma_overlap(struct vma_struct *prev, struct vma_struct *next)
++---------------
++   check correctness functions
++     void check_vmm(void);
++     void check_vma_struct(void);
++     void check_pgfault(void);
++*/
++
++static void check_vmm(void);
++static void check_vma_struct(void);
++static void check_pgfault(void);
++
++// mm_create -  alloc a mm_struct & initialize it.
++struct mm_struct *
++mm_create(void) {
++    struct mm_struct *mm = kmalloc(sizeof(struct mm_struct));
++
++    if (mm != NULL) {
++        list_init(&(mm->mmap_list));
++        mm->mmap_cache = NULL;
++        mm->pgdir = NULL;
++        mm->map_count = 0;
++
++        if (swap_init_ok) swap_init_mm(mm);
++        else mm->sm_priv = NULL;
++    }
++    return mm;
++}
++
++// vma_create - alloc a vma_struct & initialize it. (addr range: vm_start~vm_end)
++struct vma_struct *
++vma_create(uintptr_t vm_start, uintptr_t vm_end, uint32_t vm_flags) {
++    struct vma_struct *vma = kmalloc(sizeof(struct vma_struct));
++
++    if (vma != NULL) {
++        vma->vm_start = vm_start;
++        vma->vm_end = vm_end;
++        vma->vm_flags = vm_flags;
++    }
++    return vma;
++}
++
++
++// find_vma - find a vma  (vma->vm_start <= addr <= vma_vm_end)
++struct vma_struct *
++find_vma(struct mm_struct *mm, uintptr_t addr) {
++    struct vma_struct *vma = NULL;
++    if (mm != NULL) {
++        vma = mm->mmap_cache;
++        if (!(vma != NULL && vma->vm_start <= addr && vma->vm_end > addr)) {
++                bool found = 0;
++                list_entry_t *list = &(mm->mmap_list), *le = list;
++                while ((le = list_next(le)) != list) {
++                    vma = le2vma(le, list_link);
++                    if (vma->vm_start<=addr && addr < vma->vm_end) {
++                        found = 1;
++                        break;
++                    }
++                }
++                if (!found) {
++                    vma = NULL;
++                }
++        }
++        if (vma != NULL) {
++            mm->mmap_cache = vma;
++        }
++    }
++    return vma;
++}
++
++
++// check_vma_overlap - check if vma1 overlaps vma2 ?
++static inline void
++check_vma_overlap(struct vma_struct *prev, struct vma_struct *next) {
++    assert(prev->vm_start < prev->vm_end);
++    assert(prev->vm_end <= next->vm_start);
++    assert(next->vm_start < next->vm_end);
++}
++
++
++// insert_vma_struct -insert vma in mm's list link
++void
++insert_vma_struct(struct mm_struct *mm, struct vma_struct *vma) {
++    assert(vma->vm_start < vma->vm_end);
++    list_entry_t *list = &(mm->mmap_list);
++    list_entry_t *le_prev = list, *le_next;
++
++        list_entry_t *le = list;
++        while ((le = list_next(le)) != list) {
++            struct vma_struct *mmap_prev = le2vma(le, list_link);
++            if (mmap_prev->vm_start > vma->vm_start) {
++                break;
++            }
++            le_prev = le;
++        }
++
++    le_next = list_next(le_prev);
++
++    /* check overlap */
++    if (le_prev != list) {
++        check_vma_overlap(le2vma(le_prev, list_link), vma);
++    }
++    if (le_next != list) {
++        check_vma_overlap(vma, le2vma(le_next, list_link));
++    }
++
++    vma->vm_mm = mm;
++    list_add_after(le_prev, &(vma->list_link));
++
++    mm->map_count ++;
++}
++
++// mm_destroy - free mm and mm internal fields
++void
++mm_destroy(struct mm_struct *mm) {
++
++    list_entry_t *list = &(mm->mmap_list), *le;
++    while ((le = list_next(list)) != list) {
++        list_del(le);
++        kfree(le2vma(le, list_link));  //kfree vma        
++    }
++    kfree(mm); //kfree mm
++    mm=NULL;
++}
++
++// vmm_init - initialize virtual memory management
++//          - now just call check_vmm to check correctness of vmm
++void
++vmm_init(void) {
++    check_vmm();
++}
++
++// check_vmm - check correctness of vmm
++static void
++check_vmm(void) {
++    size_t nr_free_pages_store = nr_free_pages();
++    
++    check_vma_struct();
++    check_pgfault();
++
++    cprintf("check_vmm() succeeded.\n");
++}
++
++static void
++check_vma_struct(void) {
++    size_t nr_free_pages_store = nr_free_pages();
++
++    struct mm_struct *mm = mm_create();
++    assert(mm != NULL);
++
++    int step1 = 10, step2 = step1 * 10;
++
++    int i;
++    for (i = step1; i >= 1; i --) {
++        struct vma_struct *vma = vma_create(i * 5, i * 5 + 2, 0);
++        assert(vma != NULL);
++        insert_vma_struct(mm, vma);
++    }
++
++    for (i = step1 + 1; i <= step2; i ++) {
++        struct vma_struct *vma = vma_create(i * 5, i * 5 + 2, 0);
++        assert(vma != NULL);
++        insert_vma_struct(mm, vma);
++    }
++
++    list_entry_t *le = list_next(&(mm->mmap_list));
++
++    for (i = 1; i <= step2; i ++) {
++        assert(le != &(mm->mmap_list));
++        struct vma_struct *mmap = le2vma(le, list_link);
++        assert(mmap->vm_start == i * 5 && mmap->vm_end == i * 5 + 2);
++        le = list_next(le);
++    }
++
++    for (i = 5; i <= 5 * step2; i +=5) {
++        struct vma_struct *vma1 = find_vma(mm, i);
++        assert(vma1 != NULL);
++        struct vma_struct *vma2 = find_vma(mm, i+1);
++        assert(vma2 != NULL);
++        struct vma_struct *vma3 = find_vma(mm, i+2);
++        assert(vma3 == NULL);
++        struct vma_struct *vma4 = find_vma(mm, i+3);
++        assert(vma4 == NULL);
++        struct vma_struct *vma5 = find_vma(mm, i+4);
++        assert(vma5 == NULL);
++
++        assert(vma1->vm_start == i  && vma1->vm_end == i  + 2);
++        assert(vma2->vm_start == i  && vma2->vm_end == i  + 2);
++    }
++
++    for (i =4; i>=0; i--) {
++        struct vma_struct *vma_below_5= find_vma(mm,i);
++        if (vma_below_5 != NULL ) {
++           cprintf("vma_below_5: i %x, start %x, end %x\n",i, vma_below_5->vm_start, vma_below_5->vm_end); 
++        }
++        assert(vma_below_5 == NULL);
++    }
++
++    mm_destroy(mm);
++
++    cprintf("check_vma_struct() succeeded!\n");
++}
++
++struct mm_struct *check_mm_struct;
++
++// check_pgfault - check correctness of pgfault handler
++static void
++check_pgfault(void) {
++    size_t nr_free_pages_store = nr_free_pages();
++
++    check_mm_struct = mm_create();
++    assert(check_mm_struct != NULL);
++
++    struct mm_struct *mm = check_mm_struct;
++    pde_t *pgdir = mm->pgdir = boot_pgdir;
++    assert(pgdir[0] == 0);
++
++    struct vma_struct *vma = vma_create(0, PTSIZE, VM_WRITE);
++    assert(vma != NULL);
++
++    insert_vma_struct(mm, vma);
++
++    uintptr_t addr = 0x100;
++    assert(find_vma(mm, addr) == vma);
++
++    int i, sum = 0;
++    for (i = 0; i < 100; i ++) {
++        *(char *)(addr + i) = i;
++        sum += i;
++    }
++    for (i = 0; i < 100; i ++) {
++        sum -= *(char *)(addr + i);
++    }
++    assert(sum == 0);
++
++    page_remove(pgdir, ROUNDDOWN(addr, PGSIZE));
++    free_page(pde2page(pgdir[0]));
++    pgdir[0] = 0;
++
++    mm->pgdir = NULL;
++    mm_destroy(mm);
++    check_mm_struct = NULL;
++
++    assert(nr_free_pages_store == nr_free_pages());
++
++    cprintf("check_pgfault() succeeded!\n");
++}
++//page fault number
++volatile unsigned int pgfault_num=0;
++
++/* do_pgfault - interrupt handler to process the page fault execption
++ * @mm         : the control struct for a set of vma using the same PDT
++ * @error_code : the error code recorded in trapframe->tf_err which is setted by x86 hardware
++ * @addr       : the addr which causes a memory access exception, (the contents of the CR2 register)
++ *
++ * CALL GRAPH: trap--> trap_dispatch-->pgfault_handler-->do_pgfault
++ * The processor provides ucore's do_pgfault function with two items of information to aid in diagnosing
++ * the exception and recovering from it.
++ *   (1) The contents of the CR2 register. The processor loads the CR2 register with the
++ *       32-bit linear address that generated the exception. The do_pgfault fun can
++ *       use this address to locate the corresponding page directory and page-table
++ *       entries.
++ *   (2) An error code on the kernel stack. The error code for a page fault has a format different from
++ *       that for other exceptions. The error code tells the exception handler three things:
++ *         -- The P flag   (bit 0) indicates whether the exception was due to a not-present page (0)
++ *            or to either an access rights violation or the use of a reserved bit (1).
++ *         -- The W/R flag (bit 1) indicates whether the memory access that caused the exception
++ *            was a read (0) or write (1).
++ *         -- The U/S flag (bit 2) indicates whether the processor was executing at user mode (1)
++ *            or supervisor mode (0) at the time of the exception.
++ */
++int
++do_pgfault(struct mm_struct *mm, uint32_t error_code, uintptr_t addr) {
++    int ret = -E_INVAL;
++    //try to find a vma which include addr
++    struct vma_struct *vma = find_vma(mm, addr);
++
++    pgfault_num++;
++    //If the addr is in the range of a mm's vma?
++    if (vma == NULL || vma->vm_start > addr) {
++        cprintf("not valid addr %x, and  can not find it in vma\n", addr);
++        goto failed;
++    }
++    //check the error_code
++    switch (error_code & 3) {
++    default:
++            /* error code flag : default is 3 ( W/R=1, P=1): write, present */
++    case 2: /* error code flag : (W/R=1, P=0): write, not present */
++        if (!(vma->vm_flags & VM_WRITE)) {
++            cprintf("do_pgfault failed: error code flag = write AND not present, but the addr's vma cannot write\n");
++            goto failed;
++        }
++        break;
++    case 1: /* error code flag : (W/R=0, P=1): read, present */
++        cprintf("do_pgfault failed: error code flag = read AND present\n");
++        goto failed;
++    case 0: /* error code flag : (W/R=0, P=0): read, not present */
++        if (!(vma->vm_flags & (VM_READ | VM_EXEC))) {
++            cprintf("do_pgfault failed: error code flag = read AND not present, but the addr's vma cannot read or exec\n");
++            goto failed;
++        }
++    }
++    /* IF (write an existed addr ) OR
++     *    (write an non_existed addr && addr is writable) OR
++     *    (read  an non_existed addr && addr is readable)
++     * THEN
++     *    continue process
++     */
++    uint32_t perm = PTE_U;
++    if (vma->vm_flags & VM_WRITE) {
++        perm |= PTE_W;
++    }
++    addr = ROUNDDOWN(addr, PGSIZE);
++
++    ret = -E_NO_MEM;
++
++    pte_t *ptep=NULL;
++    /*LAB3 EXERCISE 1: YOUR CODE
++    * Maybe you want help comment, BELOW comments can help you finish the code
++    *
++    * Some Useful MACROs and DEFINEs, you can use them in below implementation.
++    * MACROs or Functions:
++    *   get_pte : get an pte and return the kernel virtual address of this pte for la
++    *             if the PT contians this pte didn't exist, alloc a page for PT (notice the 3th parameter '1')
++    *   pgdir_alloc_page : call alloc_page & page_insert functions to allocate a page size memory & setup
++    *             an addr map pa<--->la with linear address la and the PDT pgdir
++    * DEFINES:
++    *   VM_WRITE  : If vma->vm_flags & VM_WRITE == 1/0, then the vma is writable/non writable
++    *   PTE_W           0x002                   // page table/directory entry flags bit : Writeable
++    *   PTE_U           0x004                   // page table/directory entry flags bit : User can access
++    * VARIABLES:
++    *   mm->pgdir : the PDT of these vma
++    *
++    */
++#if 0
++    /*LAB3 EXERCISE 1: YOUR CODE*/
++    ptep = ???              //(1) try to find a pte, if pte's PT(Page Table) isn't existed, then create a PT.
++    if (*ptep == 0) {
++                            //(2) if the phy addr isn't exist, then alloc a page & map the phy addr with logical addr
++
++    }
++    else {
++    /*LAB3 EXERCISE 2: YOUR CODE
++    * Now we think this pte is a  swap entry, we should load data from disk to a page with phy addr,
++    * and map the phy addr with logical addr, trigger swap manager to record the access situation of this page.
++    *
++    *  Some Useful MACROs and DEFINEs, you can use them in below implementation.
++    *  MACROs or Functions:
++    *    swap_in(mm, addr, &page) : alloc a memory page, then according to the swap entry in PTE for addr,
++    *                               find the addr of disk page, read the content of disk page into this memroy page
++    *    page_insert ： build the map of phy addr of an Page with the linear addr la
++    *    swap_map_swappable ： set the page swappable
++    */
++        if(swap_init_ok) {
++            struct Page *page=NULL;
++                                    //(1）According to the mm AND addr, try to load the content of right disk page
++                                    //    into the memory which page managed.
++                                    //(2) According to the mm, addr AND page, setup the map of phy addr <---> logical addr
++                                    //(3) make the page swappable.
++        }
++        else {
++            cprintf("no swap_init_ok but ptep is %x, failed\n",*ptep);
++            goto failed;
++        }
++   }
++#endif
++   ret = 0;
++failed:
++    return ret;
++}
++
+diff -ruP /home/xmh/origin/ucore_lab/labcodes/lab4/kern/process/proc.c lab4/kern/process/proc.c
+--- /home/xmh/origin/ucore_lab/labcodes/lab4/kern/process/proc.c	2020-05-23 13:59:51.745663724 +0000
++++ lab4/kern/process/proc.c	2020-05-23 15:40:18.157136581 +0000
+@@ -58,12 +58,21 @@
+ 
+ */
+ 
++#define __Lock(lock) do{\
++    if(__sync_lock_test_and_set(&lock,1))\
++        continue;
++
++#define __UnLock(lock) \
++    __sync_lock_release(&lock,0);\
++}while(0)
++
++
+ // the process set's list
+ list_entry_t proc_list;
+ 
+-#define HASH_SHIFT          10
+-#define HASH_LIST_SIZE      (1 << HASH_SHIFT)
+-#define pid_hashfn(x)       (hash32(x, HASH_SHIFT))
++#define HASH_SHIFT 10
++#define HASH_LIST_SIZE (1 << HASH_SHIFT)
++#define pid_hashfn(x) (hash32(x, HASH_SHIFT))
+ 
+ // has list for process set based on pid
+ static list_entry_t hash_list[HASH_LIST_SIZE];
+@@ -83,11 +92,13 @@
+ 
+ // alloc_proc - alloc a proc_struct and init all fields of proc_struct
+ static struct proc_struct *
+-alloc_proc(void) {
++alloc_proc(void)
++{
+     struct proc_struct *proc = kmalloc(sizeof(struct proc_struct));
+-    if (proc != NULL) {
+-    //LAB4:EXERCISE1 YOUR CODE
+-    /*
++    if (proc != NULL)
++    {
++        //LAB4:EXERCISE1 YOUR CODE
++        /*
+      * below fields in proc_struct need to be initialized
+      *       enum proc_state state;                      // Process state
+      *       int pid;                                    // Process ID
+@@ -102,20 +113,34 @@
+      *       uint32_t flags;                             // Process flag
+      *       char name[PROC_NAME_LEN + 1];               // Process name
+      */
++        proc->state = PROC_UNINIT;
++        proc->pid = -1;
++        proc->runs = 0;
++        proc->kstack = 0;
++        proc->need_resched = 0;
++        proc->parent = NULL;
++        proc->mm = NULL;
++        memset(&(proc->context), 0, sizeof(proc->context));
++        proc->tf = NULL;
++        proc->cr3 = boot_cr3;
++        proc->flags = 0;
++        memset(proc->name, 0, PROC_NAME_LEN);
+     }
+     return proc;
+ }
+ 
+ // set_proc_name - set the name of proc
+ char *
+-set_proc_name(struct proc_struct *proc, const char *name) {
++set_proc_name(struct proc_struct *proc, const char *name)
++{
+     memset(proc->name, 0, sizeof(proc->name));
+     return memcpy(proc->name, name, PROC_NAME_LEN);
+ }
+ 
+ // get_proc_name - get the name of proc
+ char *
+-get_proc_name(struct proc_struct *proc) {
++get_proc_name(struct proc_struct *proc)
++{
+     static char name[PROC_NAME_LEN + 1];
+     memset(name, 0, sizeof(name));
+     return memcpy(name, proc->name, PROC_NAME_LEN);
+@@ -123,32 +148,40 @@
+ 
+ // get_pid - alloc a unique pid for process
+ static int
+-get_pid(void) {
++get_pid(void)
++{
+     static_assert(MAX_PID > MAX_PROCESS);
+     struct proc_struct *proc;
+     list_entry_t *list = &proc_list, *le;
+     static int next_safe = MAX_PID, last_pid = MAX_PID;
+-    if (++ last_pid >= MAX_PID) {
++    if (++last_pid >= MAX_PID)
++    {
+         last_pid = 1;
+         goto inside;
+     }
+-    if (last_pid >= next_safe) {
++    if (last_pid >= next_safe)
++    {
+     inside:
+         next_safe = MAX_PID;
+     repeat:
+         le = list;
+-        while ((le = list_next(le)) != list) {
++        while ((le = list_next(le)) != list)
++        {
+             proc = le2proc(le, list_link);
+-            if (proc->pid == last_pid) {
+-                if (++ last_pid >= next_safe) {
+-                    if (last_pid >= MAX_PID) {
++            if (proc->pid == last_pid)
++            {
++                if (++last_pid >= next_safe)
++                {
++                    if (last_pid >= MAX_PID)
++                    {
+                         last_pid = 1;
+                     }
+                     next_safe = MAX_PID;
+                     goto repeat;
+                 }
+             }
+-            else if (proc->pid > last_pid && next_safe > proc->pid) {
++            else if (proc->pid > last_pid && next_safe > proc->pid)
++            {
+                 next_safe = proc->pid;
+             }
+         }
+@@ -158,9 +191,10 @@
+ 
+ // proc_run - make process "proc" running on cpu
+ // NOTE: before call switch_to, should load  base addr of "proc"'s new PDT
+-void
+-proc_run(struct proc_struct *proc) {
+-    if (proc != current) {
++void proc_run(struct proc_struct *proc)
++{
++    if (proc != current)
++    {
+         bool intr_flag;
+         struct proc_struct *prev = current, *next = proc;
+         local_intr_save(intr_flag);
+@@ -178,24 +212,30 @@
+ // NOTE: the addr of forkret is setted in copy_thread function
+ //       after switch_to, the current proc will execute here.
+ static void
+-forkret(void) {
++forkret(void)
++{
+     forkrets(current->tf);
+ }
+ 
+ // hash_proc - add proc into proc hash_list
+ static void
+-hash_proc(struct proc_struct *proc) {
++hash_proc(struct proc_struct *proc)
++{
+     list_add(hash_list + pid_hashfn(proc->pid), &(proc->hash_link));
+ }
+ 
+ // find_proc - find proc frome proc hash_list according to pid
+ struct proc_struct *
+-find_proc(int pid) {
+-    if (0 < pid && pid < MAX_PID) {
++find_proc(int pid)
++{
++    if (0 < pid && pid < MAX_PID)
++    {
+         list_entry_t *list = hash_list + pid_hashfn(pid), *le = list;
+-        while ((le = list_next(le)) != list) {
++        while ((le = list_next(le)) != list)
++        {
+             struct proc_struct *proc = le2proc(le, hash_link);
+-            if (proc->pid == pid) {
++            if (proc->pid == pid)
++            {
+                 return proc;
+             }
+         }
+@@ -204,10 +244,10 @@
+ }
+ 
+ // kernel_thread - create a kernel thread using "fn" function
+-// NOTE: the contents of temp trapframe tf will be copied to 
++// NOTE: the contents of temp trapframe tf will be copied to
+ //       proc->tf in do_fork-->copy_thread function
+-int
+-kernel_thread(int (*fn)(void *), void *arg, uint32_t clone_flags) {
++int kernel_thread(int (*fn)(void *), void *arg, uint32_t clone_flags)
++{
+     struct trapframe tf;
+     memset(&tf, 0, sizeof(struct trapframe));
+     tf.tf_cs = KERNEL_CS;
+@@ -220,9 +260,11 @@
+ 
+ // setup_kstack - alloc pages with size KSTACKPAGE as process kernel stack
+ static int
+-setup_kstack(struct proc_struct *proc) {
++setup_kstack(struct proc_struct *proc)
++{
+     struct Page *page = alloc_pages(KSTACKPAGE);
+-    if (page != NULL) {
++    if (page != NULL)
++    {
+         proc->kstack = (uintptr_t)page2kva(page);
+         return 0;
+     }
+@@ -231,14 +273,16 @@
+ 
+ // put_kstack - free the memory space of process kernel stack
+ static void
+-put_kstack(struct proc_struct *proc) {
++put_kstack(struct proc_struct *proc)
++{
+     free_pages(kva2page((void *)(proc->kstack)), KSTACKPAGE);
+ }
+ 
+ // copy_mm - process "proc" duplicate OR share process "current"'s mm according clone_flags
+ //         - if clone_flags & CLONE_VM, then "share" ; else "duplicate"
+ static int
+-copy_mm(uint32_t clone_flags, struct proc_struct *proc) {
++copy_mm(uint32_t clone_flags, struct proc_struct *proc)
++{
+     assert(current->mm == NULL);
+     /* do nothing in this project */
+     return 0;
+@@ -247,7 +291,8 @@
+ // copy_thread - setup the trapframe on the  process's kernel stack top and
+ //             - setup the kernel entry point and stack of process
+ static void
+-copy_thread(struct proc_struct *proc, uintptr_t esp, struct trapframe *tf) {
++copy_thread(struct proc_struct *proc, uintptr_t esp, struct trapframe *tf)
++{
+     proc->tf = (struct trapframe *)(proc->kstack + KSTACKSIZE) - 1;
+     *(proc->tf) = *tf;
+     proc->tf->tf_regs.reg_eax = 0;
+@@ -263,11 +308,12 @@
+  * @stack:       the parent's user stack pointer. if stack==0, It means to fork a kernel thread.
+  * @tf:          the trapframe info, which will be copied to child process's proc->tf
+  */
+-int
+-do_fork(uint32_t clone_flags, uintptr_t stack, struct trapframe *tf) {
++int do_fork(uint32_t clone_flags, uintptr_t stack, struct trapframe *tf)
++{
+     int ret = -E_NO_FREE_PROC;
+     struct proc_struct *proc;
+-    if (nr_process >= MAX_PROCESS) {
++    if (nr_process >= MAX_PROCESS)
++    {
+         goto fork_out;
+     }
+     ret = -E_NO_MEM;
+@@ -296,6 +342,32 @@
+     //    5. insert proc_struct into hash_list && proc_list
+     //    6. call wakeup_proc to make the new child process RUNNABLE
+     //    7. set ret vaule using child proc's pid
++    if ((proc = alloc_proc()) == NULL)
++    {
++        goto fork_out;
++    }
++    proc->parent = current;
++    if (setup_kstack(proc) != 0)
++    {
++        goto bad_fork_cleanup_proc;
++    }
++    if (copy_mm(clone_flags, proc) != 0)
++    {
++        goto bad_fork_cleanup_kstack;
++    }
++    copy_thread(proc, stack, tf);
++
++    static int lock = 0;
++    __Lock(lock);
++    {
++        proc->pid = get_pid();
++        hash_proc(proc);
++        list_add(&proc_list, &(proc->list_link));
++        nr_process++;
++    }
++    __UnLock(lock);
++    wakeup_proc(proc);
++    ret = proc->pid;
+ fork_out:
+     return ret;
+ 
+@@ -310,32 +382,35 @@
+ //   1. call exit_mmap & put_pgdir & mm_destroy to free the almost all memory space of process
+ //   2. set process' state as PROC_ZOMBIE, then call wakeup_proc(parent) to ask parent reclaim itself.
+ //   3. call scheduler to switch to other process
+-int
+-do_exit(int error_code) {
++int do_exit(int error_code)
++{
+     panic("process exit!!.\n");
+ }
+ 
+ // init_main - the second kernel thread used to create user_main kernel threads
+ static int
+-init_main(void *arg) {
++init_main(void *arg)
++{
+     cprintf("this initproc, pid = %d, name = \"%s\"\n", current->pid, get_proc_name(current));
+     cprintf("To U: \"%s\".\n", (const char *)arg);
+     cprintf("To U: \"en.., Bye, Bye. :)\"\n");
+     return 0;
+ }
+ 
+-// proc_init - set up the first kernel thread idleproc "idle" by itself and 
++// proc_init - set up the first kernel thread idleproc "idle" by itself and
+ //           - create the second kernel thread init_main
+-void
+-proc_init(void) {
++void proc_init(void)
++{
+     int i;
+ 
+     list_init(&proc_list);
+-    for (i = 0; i < HASH_LIST_SIZE; i ++) {
++    for (i = 0; i < HASH_LIST_SIZE; i++)
++    {
+         list_init(hash_list + i);
+     }
+ 
+-    if ((idleproc = alloc_proc()) == NULL) {
++    if ((idleproc = alloc_proc()) == NULL)
++    {
+         panic("cannot alloc idleproc.\n");
+     }
+ 
+@@ -344,12 +419,13 @@
+     idleproc->kstack = (uintptr_t)bootstack;
+     idleproc->need_resched = 1;
+     set_proc_name(idleproc, "idle");
+-    nr_process ++;
++    nr_process++;
+ 
+     current = idleproc;
+ 
+     int pid = kernel_thread(init_main, "Hello world!!", 0);
+-    if (pid <= 0) {
++    if (pid <= 0)
++    {
+         panic("create init_main failed.\n");
+     }
+ 
+@@ -361,12 +437,13 @@
+ }
+ 
+ // cpu_idle - at the end of kern_init, the first kernel thread idleproc will do below works
+-void
+-cpu_idle(void) {
+-    while (1) {
+-        if (current->need_resched) {
++void cpu_idle(void)
++{
++    while (1)
++    {
++        if (current->need_resched)
++        {
+             schedule();
+         }
+     }
+ }
+-
+diff -ruP /home/xmh/origin/ucore_lab/labcodes/lab4/kern/trap/trap.c lab4/kern/trap/trap.c
+--- /home/xmh/origin/ucore_lab/labcodes/lab4/kern/trap/trap.c	2020-05-23 13:59:51.745663724 +0000
++++ lab4/kern/trap/trap.c	2020-05-23 15:41:06.961693655 +0000
+@@ -48,6 +48,14 @@
+       *     You don't know the meaning of this instruction? just google it! and check the libs/x86.h to know more.
+       *     Notice: the argument of lidt is idt_pd. try to find it!
+       */
++    extern uintptr_t __vectors[];
++    int i;
++    for (i = 0; i < 256; i++)
++    {
++        SETGATE(idt[i], 0, GD_KTEXT, __vectors[i], DPL_KERNEL);
++    }
++    SETGATE(idt[T_SWITCH_TOK], 0, GD_KTEXT, __vectors[T_SWITCH_TOK], DPL_USER);
++    lidt(&idt_pd);
+ }
+ 
+ static const char *
+@@ -162,6 +170,9 @@
+ static volatile int in_swap_tick_event = 0;
+ extern struct mm_struct *check_mm_struct;
+ 
++/* temporary trapframe or pointer to trapframe */
++struct trapframe switchk2u, *switchu2k;
++
+ static void
+ trap_dispatch(struct trapframe *tf) {
+     char c;
+@@ -186,6 +197,11 @@
+          * (2) Every TICK_NUM cycle, you can print some info using a funciton, such as print_ticks().
+          * (3) Too Simple? Yes, I think so!
+          */
++        ticks++;
++        if (ticks % TICK_NUM == 0)
++        {
++            print_ticks();
++        }
+         break;
+     case IRQ_OFFSET + IRQ_COM1:
+         c = cons_getc();
+@@ -197,8 +213,29 @@
+         break;
+     //LAB1 CHALLENGE 1 : YOUR CODE you should modify below codes.
+     case T_SWITCH_TOU:
++        if (tf->tf_cs != USER_CS)
++        {
++            switchk2u = *tf;
++            switchk2u.tf_cs = USER_CS;
++            switchk2u.tf_ds = USER_DS;
++            switchk2u.tf_es = USER_DS;
++            switchk2u.tf_ss = USER_DS;
++            switchk2u.tf_esp = (uint32_t)tf + sizeof(struct trapframe) - 8;
++            switchk2u.tf_eflags |= FL_IOPL_MASK;
++            *((uint32_t *)tf - 1) = (uint32_t)&switchk2u;
++        }
++        break;
+     case T_SWITCH_TOK:
+-        panic("T_SWITCH_** ??\n");
++        if (tf->tf_cs != KERNEL_CS)
++        {
++            tf->tf_cs = KERNEL_CS;
++            tf->tf_ds = KERNEL_DS;
++            tf->tf_es = KERNEL_DS;
++            tf->tf_eflags &= ~FL_IOPL_MASK;
++            switchu2k = (struct trapframe *)(tf->tf_esp - (sizeof(struct trapframe) - 8));
++            memmove(switchu2k, tf, sizeof(struct trapframe) - 8);
++            *((uint32_t *)tf - 1) = (uint32_t)switchu2k;
++        }
+         break;
+     case IRQ_OFFSET + IRQ_IDE1:
+     case IRQ_OFFSET + IRQ_IDE2:
+diff -ruP /home/xmh/origin/ucore_lab/labcodes/lab4/Makefile lab4/Makefile
+--- /home/xmh/origin/ucore_lab/labcodes/lab4/Makefile	2020-05-23 13:59:51.741663656 +0000
++++ lab4/Makefile	2020-05-23 15:24:35.704239433 +0000
+@@ -226,7 +226,7 @@
+ 
+ .DEFAULT_GOAL := TARGETS
+ 
+-QEMUOPTS = -hda $(UCOREIMG) -drive file=$(SWAPIMG),media=disk,cache=writeback
++QEMUOPTS = -hda $(UCOREIMG) -drive file=$(SWAPIMG),media=disk,cache=writeback -curses
+ 
+ .PHONY: qemu qemu-nox debug debug-nox
+ qemu-mon: $(UCOREIMG) $(SWAPIMG)
+diff -ruP /home/xmh/origin/ucore_lab/labcodes/lab4/Makefile.orig lab4/Makefile.orig
+--- /home/xmh/origin/ucore_lab/labcodes/lab4/Makefile.orig	1970-01-01 00:00:00.000000000 +0000
++++ lab4/Makefile.orig	2020-05-23 01:53:25.597018296 +0000
+@@ -0,0 +1,292 @@
++PROJ	:= 8
++EMPTY	:=
++SPACE	:= $(EMPTY) $(EMPTY)
++SLASH	:= /
++
++V       := @
++#need llvm/cang-3.5+
++#USELLVM := 1
++# try to infer the correct GCCPREFX
++ifndef GCCPREFIX
++GCCPREFIX := $(shell if i386-elf-objdump -i 2>&1 | grep '^elf32-i386$$' >/dev/null 2>&1; \
++	then echo 'i386-elf-'; \
++	elif objdump -i 2>&1 | grep 'elf32-i386' >/dev/null 2>&1; \
++	then echo ''; \
++	else echo "***" 1>&2; \
++	echo "*** Error: Couldn't find an i386-elf version of GCC/binutils." 1>&2; \
++	echo "*** Is the directory with i386-elf-gcc in your PATH?" 1>&2; \
++	echo "*** If your i386-elf toolchain is installed with a command" 1>&2; \
++	echo "*** prefix other than 'i386-elf-', set your GCCPREFIX" 1>&2; \
++	echo "*** environment variable to that prefix and run 'make' again." 1>&2; \
++	echo "*** To turn off this error, run 'gmake GCCPREFIX= ...'." 1>&2; \
++	echo "***" 1>&2; exit 1; fi)
++endif
++
++# try to infer the correct QEMU
++ifndef QEMU
++QEMU := $(shell if which qemu-system-i386 > /dev/null; \
++	then echo 'qemu-system-i386'; exit; \
++	elif which i386-elf-qemu > /dev/null; \
++	then echo 'i386-elf-qemu'; exit; \
++	elif which qemu > /dev/null; \
++	then echo 'qemu'; exit; \
++	else \
++	echo "***" 1>&2; \
++	echo "*** Error: Couldn't find a working QEMU executable." 1>&2; \
++	echo "*** Is the directory containing the qemu binary in your PATH" 1>&2; \
++	echo "***" 1>&2; exit 1; fi)
++endif
++
++# eliminate default suffix rules
++.SUFFIXES: .c .S .h
++
++# delete target files if there is an error (or make is interrupted)
++.DELETE_ON_ERROR:
++
++# define compiler and flags
++ifndef  USELLVM
++HOSTCC		:= gcc
++HOSTCFLAGS	:= -g -Wall -O2
++CC		:= $(GCCPREFIX)gcc
++CFLAGS	:= -march=i686 -fno-builtin -fno-PIC -Wall -ggdb -m32 -gstabs -nostdinc $(DEFS)
++CFLAGS	+= $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
++else
++HOSTCC		:= clang
++HOSTCFLAGS	:= -g -Wall -O2
++CC		:= clang
++CFLAGS	:= -march=i686 -fno-builtin -fno-PIC -Wall -g -m32 -nostdinc $(DEFS)
++CFLAGS	+= $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
++endif
++
++GDB		:= $(GCCPREFIX)gdb
++CTYPE	:= c S
++
++LD      := $(GCCPREFIX)ld
++LDFLAGS	:= -m $(shell $(LD) -V | grep elf_i386 2>/dev/null | head -n 1)
++LDFLAGS	+= -nostdlib
++
++OBJCOPY := $(GCCPREFIX)objcopy
++OBJDUMP := $(GCCPREFIX)objdump
++
++COPY	:= cp
++MKDIR   := mkdir -p
++MV		:= mv
++RM		:= rm -f
++AWK		:= awk
++SED		:= sed
++SH		:= sh
++TR		:= tr
++TOUCH	:= touch -c
++
++OBJDIR	:= obj
++BINDIR	:= bin
++
++ALLOBJS	:=
++ALLDEPS	:=
++TARGETS	:=
++
++include tools/function.mk
++
++listf_cc = $(call listf,$(1),$(CTYPE))
++
++# for cc
++add_files_cc = $(call add_files,$(1),$(CC),$(CFLAGS) $(3),$(2),$(4))
++create_target_cc = $(call create_target,$(1),$(2),$(3),$(CC),$(CFLAGS))
++
++# for hostcc
++add_files_host = $(call add_files,$(1),$(HOSTCC),$(HOSTCFLAGS),$(2),$(3))
++create_target_host = $(call create_target,$(1),$(2),$(3),$(HOSTCC),$(HOSTCFLAGS))
++
++cgtype = $(patsubst %.$(2),%.$(3),$(1))
++objfile = $(call toobj,$(1))
++asmfile = $(call cgtype,$(call toobj,$(1)),o,asm)
++outfile = $(call cgtype,$(call toobj,$(1)),o,out)
++symfile = $(call cgtype,$(call toobj,$(1)),o,sym)
++
++# for match pattern
++match = $(shell echo $(2) | $(AWK) '{for(i=1;i<=NF;i++){if(match("$(1)","^"$$(i)"$$")){exit 1;}}}'; echo $$?)
++
++# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
++# include kernel/user
++
++INCLUDE	+= libs/
++
++CFLAGS	+= $(addprefix -I,$(INCLUDE))
++
++LIBDIR	+= libs
++
++$(call add_files_cc,$(call listf_cc,$(LIBDIR)),libs,)
++
++# -------------------------------------------------------------------
++# kernel
++
++KINCLUDE	+= kern/debug/ \
++			   kern/driver/ \
++			   kern/trap/ \
++			   kern/mm/ \
++			   kern/libs/ \
++			   kern/sync/ \
++			   kern/fs/    \
++			   kern/process \
++			   kern/schedule
++
++KSRCDIR		+= kern/init \
++			   kern/libs \
++			   kern/debug \
++			   kern/driver \
++			   kern/trap \
++			   kern/mm \
++			   kern/sync \
++			   kern/fs    \
++			   kern/process \
++			   kern/schedule
++
++KCFLAGS		+= $(addprefix -I,$(KINCLUDE))
++
++$(call add_files_cc,$(call listf_cc,$(KSRCDIR)),kernel,$(KCFLAGS))
++
++KOBJS	= $(call read_packet,kernel libs)
++
++# create kernel target
++kernel = $(call totarget,kernel)
++
++$(kernel): tools/kernel.ld
++
++$(kernel): $(KOBJS)
++	@echo + ld $@
++	$(V)$(LD) $(LDFLAGS) -T tools/kernel.ld -o $@ $(KOBJS)
++	@$(OBJDUMP) -S $@ > $(call asmfile,kernel)
++	@$(OBJDUMP) -t $@ | $(SED) '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $(call symfile,kernel)
++
++$(call create_target,kernel)
++
++# -------------------------------------------------------------------
++
++# create bootblock
++bootfiles = $(call listf_cc,boot)
++$(foreach f,$(bootfiles),$(call cc_compile,$(f),$(CC),$(CFLAGS) -Os -nostdinc))
++
++bootblock = $(call totarget,bootblock)
++
++$(bootblock): $(call toobj,boot/bootasm.S) $(call toobj,$(bootfiles)) | $(call totarget,sign)
++	@echo + ld $@
++	$(V)$(LD) $(LDFLAGS) -N -T tools/boot.ld $^ -o $(call toobj,bootblock)
++	@$(OBJDUMP) -S $(call objfile,bootblock) > $(call asmfile,bootblock)
++	@$(OBJCOPY) -S -O binary $(call objfile,bootblock) $(call outfile,bootblock)
++	@$(call totarget,sign) $(call outfile,bootblock) $(bootblock)
++
++$(call create_target,bootblock)
++
++# -------------------------------------------------------------------
++
++# create 'sign' tools
++$(call add_files_host,tools/sign.c,sign,sign)
++$(call create_target_host,sign,sign)
++
++# -------------------------------------------------------------------
++
++# create ucore.img
++UCOREIMG	:= $(call totarget,ucore.img)
++
++$(UCOREIMG): $(kernel) $(bootblock)
++	$(V)dd if=/dev/zero of=$@ count=10000
++	$(V)dd if=$(bootblock) of=$@ conv=notrunc
++	$(V)dd if=$(kernel) of=$@ seek=1 conv=notrunc
++
++$(call create_target,ucore.img)
++
++# -------------------------------------------------------------------
++
++# create swap.img
++SWAPIMG		:= $(call totarget,swap.img)
++
++$(SWAPIMG):
++	$(V)dd if=/dev/zero of=$@ bs=1024k count=128
++
++$(call create_target,swap.img)
++
++# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
++
++$(call finish_all)
++
++IGNORE_ALLDEPS	= clean \
++				  dist-clean \
++				  grade \
++				  touch \
++				  print-.+ \
++				  handin
++
++ifeq ($(call match,$(MAKECMDGOALS),$(IGNORE_ALLDEPS)),0)
++-include $(ALLDEPS)
++endif
++
++# files for grade script
++
++TARGETS: $(TARGETS)
++
++.DEFAULT_GOAL := TARGETS
++
++QEMUOPTS = -hda $(UCOREIMG) -drive file=$(SWAPIMG),media=disk,cache=writeback
++
++.PHONY: qemu qemu-nox debug debug-nox
++qemu-mon: $(UCOREIMG) $(SWAPIMG)
++	$(V)$(QEMU)  -no-reboot -monitor stdio $(QEMUOPTS) -serial null
++qemu: $(UCOREIMG) $(SWAPIMG)
++	$(V)$(QEMU)  -no-reboot -parallel stdio $(QEMUOPTS) -serial null
++
++qemu-nox: $(UCOREIMG) $(SWAPIMG)
++	$(V)$(QEMU)  -no-reboot -serial mon:stdio $(QEMUOPTS) -nographic
++
++TERMINAL := gnome-terminal
++
++debug: $(UCOREIMG) $(SWAPIMG)
++	$(V)$(QEMU) -S -s -parallel stdio $(QEMUOPTS) -serial null &
++	$(V)sleep 2
++	$(V)$(TERMINAL) -e "$(GDB) -q -x tools/gdbinit"
++
++debug-nox: $(UCOREIMG) $(SWAPIMG)
++	$(V)$(QEMU) -S -s -serial mon:stdio $(QEMUOPTS) -nographic &
++	$(V)sleep 2
++	$(V)$(TERMINAL) -e "$(GDB) -q -x tools/gdbinit"
++
++.PHONY: grade touch
++
++GRADE_GDB_IN	:= .gdb.in
++GRADE_QEMU_OUT	:= .qemu.out
++HANDIN			:= proj$(PROJ)-handin.tar.gz
++
++TOUCH_FILES		:= kern/trap/trap.c
++
++MAKEOPTS		:= --quiet --no-print-directory
++
++grade:
++	$(V)$(MAKE) $(MAKEOPTS) clean
++	$(V)$(SH) tools/grade.sh
++
++touch:
++	$(V)$(foreach f,$(TOUCH_FILES),$(TOUCH) $(f))
++
++print-%:
++	@echo $($(shell echo $(patsubst print-%,%,$@) | $(TR) [a-z] [A-Z]))
++
++.PHONY: clean dist-clean handin packall tags
++clean:
++	$(V)$(RM) $(GRADE_GDB_IN) $(GRADE_QEMU_OUT) cscope* tags
++	-$(RM) -r $(OBJDIR) $(BINDIR)
++
++dist-clean: clean
++	-$(RM) $(HANDIN)
++
++handin: packall
++	@echo Please visit http://learn.tsinghua.edu.cn and upload $(HANDIN). Thanks!
++
++packall: clean
++	@$(RM) -f $(HANDIN)
++	@tar -czf $(HANDIN) `find . -type f -o -type d | grep -v '^\.*$$' | grep -vF '$(HANDIN)'`
++
++tags:
++	@echo TAGS ALL
++	$(V)rm -f cscope.files cscope.in.out cscope.out cscope.po.out tags
++	$(V)find . -type f -name "*.[chS]" >cscope.files
++	$(V)cscope -bq 
++	$(V)ctags -L cscope.files

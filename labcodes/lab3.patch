@@ -1,0 +1,1469 @@
+只在 lab3 存在：bin
+只在 lab3 存在：.check_swap.log
+只在 lab3 存在：.gdb.in
+diff -r -u /home/xmh/origin/ucore_lab/labcodes/lab3/kern/debug/kdebug.c lab3/kern/debug/kdebug.c
+--- /home/xmh/origin/ucore_lab/labcodes/lab3/kern/debug/kdebug.c	2020-05-23 13:59:51.737663588 +0000
++++ lab3/kern/debug/kdebug.c	2020-05-23 09:58:23.564892517 +0000
+@@ -305,5 +305,18 @@
+       *           NOTICE: the calling funciton's return addr eip  = ss:[ebp+4]
+       *                   the calling funciton's ebp = ss:[ebp]
+       */
++    uint32_t ebp = read_ebp();
++    uint32_t eip = read_eip();
++    for (int i = 0; i < STACKFRAME_DEPTH && ebp != 0; i++)
++    {
++        cprintf("ebp:0x%08x   eip:0x%08x ", ebp, eip);
++        uint32_t *tmp = (uint32_t *)ebp + 2;
++        cprintf("arg :0x%08x 0x%08x 0x%08x 0x%08x", *(tmp + 0), *(tmp + 1), *(tmp + 2), *(tmp + 3));
++        cprintf("\n");
++        print_debuginfo(eip - 1);
++        eip = ((uint32_t *)ebp)[1];
++        ebp = ((uint32_t *)ebp)[0];
++    }
+ }
+ 
++
+diff -r -u /home/xmh/origin/ucore_lab/labcodes/lab3/kern/mm/default_pmm.c lab3/kern/mm/default_pmm.c
+--- /home/xmh/origin/ucore_lab/labcodes/lab3/kern/mm/default_pmm.c	2020-05-23 13:59:51.737663588 +0000
++++ lab3/kern/mm/default_pmm.c	2020-05-23 09:56:01.563353729 +0000
+@@ -99,16 +99,19 @@
+ #define nr_free (free_area.nr_free)
+ 
+ static void
+-default_init(void) {
++default_init(void)
++{
+     list_init(&free_list);
+     nr_free = 0;
+ }
+ 
+ static void
+-default_init_memmap(struct Page *base, size_t n) {
++default_init_memmap(struct Page *base, size_t n)
++{
+     assert(n > 0);
+     struct Page *p = base;
+-    for (; p != base + n; p ++) {
++    for (; p != base + n; p++)
++    {
+         assert(PageReserved(p));
+         p->flags = p->property = 0;
+         set_page_ref(p, 0);
+@@ -120,27 +123,34 @@
+ }
+ 
+ static struct Page *
+-default_alloc_pages(size_t n) {
++default_alloc_pages(size_t n)
++{
+     assert(n > 0);
+-    if (n > nr_free) {
++    if (n > nr_free)
++    {
+         return NULL;
+     }
+     struct Page *page = NULL;
+     list_entry_t *le = &free_list;
+-    while ((le = list_next(le)) != &free_list) {
++    while ((le = list_next(le)) != &free_list)
++    {
+         struct Page *p = le2page(le, page_link);
+-        if (p->property >= n) {
++        if (p->property >= n)
++        {
+             page = p;
+             break;
+         }
+     }
+-    if (page != NULL) {
+-        list_del(&(page->page_link));
+-        if (page->property > n) {
++    if (page != NULL)
++    {
++        if (page->property > n)
++        {
+             struct Page *p = page + n;
+             p->property = page->property - n;
+-            list_add(&free_list, &(p->page_link));
+-    }
++            SetPageProperty(p);
++            list_add_after(&(page->page_link), &(p->page_link));
++        }
++        list_del(&(page->page_link));
+         nr_free -= n;
+         ClearPageProperty(page);
+     }
+@@ -148,10 +158,12 @@
+ }
+ 
+ static void
+-default_free_pages(struct Page *base, size_t n) {
++default_free_pages(struct Page *base, size_t n)
++{
+     assert(n > 0);
+     struct Page *p = base;
+-    for (; p != base + n; p ++) {
++    for (; p != base + n; p++)
++    {
+         assert(!PageReserved(p) && !PageProperty(p));
+         p->flags = 0;
+         set_page_ref(p, 0);
+@@ -159,15 +171,18 @@
+     base->property = n;
+     SetPageProperty(base);
+     list_entry_t *le = list_next(&free_list);
+-    while (le != &free_list) {
++    while (le != &free_list)
++    {
+         p = le2page(le, page_link);
+         le = list_next(le);
+-        if (base + base->property == p) {
++        if (base + base->property == p)
++        {
+             base->property += p->property;
+             ClearPageProperty(p);
+             list_del(&(p->page_link));
+         }
+-        else if (p + p->property == base) {
++        else if (p + p->property == base)
++        {
+             p->property += base->property;
+             ClearPageProperty(base);
+             base = p;
+@@ -175,16 +190,24 @@
+         }
+     }
+     nr_free += n;
+-    list_add(&free_list, &(base->page_link));
++    for (le = list_next(&free_list); le != &free_list; le = list_next(le))
++    {
++        p = le2page(le, page_link);
++        if (base + base->property <= p)
++            break;
++    }
++    list_add_before(le, &(base->page_link));
+ }
+ 
+ static size_t
+-default_nr_free_pages(void) {
++default_nr_free_pages(void)
++{
+     return nr_free;
+ }
+ 
+ static void
+-basic_check(void) {
++basic_check(void)
++{
+     struct Page *p0, *p1, *p2;
+     p0 = p1 = p2 = NULL;
+     assert((p0 = alloc_page()) != NULL);
+@@ -234,16 +257,18 @@
+     free_page(p2);
+ }
+ 
+-// LAB2: below code is used to check the first fit allocation algorithm (your EXERCISE 1) 
++// LAB2: below code is used to check the first fit allocation algorithm (your EXERCISE 1)
+ // NOTICE: You SHOULD NOT CHANGE basic_check, default_check functions!
+ static void
+-default_check(void) {
++default_check(void)
++{
+     int count = 0, total = 0;
+     list_entry_t *le = &free_list;
+-    while ((le = list_next(le)) != &free_list) {
++    while ((le = list_next(le)) != &free_list)
++    {
+         struct Page *p = le2page(le, page_link);
+         assert(PageProperty(p));
+-        count ++, total += p->property;
++        count++, total += p->property;
+     }
+     assert(total == nr_free_pages());
+ 
+@@ -291,9 +316,10 @@
+     free_pages(p0, 5);
+ 
+     le = &free_list;
+-    while ((le = list_next(le)) != &free_list) {
++    while ((le = list_next(le)) != &free_list)
++    {
+         struct Page *p = le2page(le, page_link);
+-        count --, total -= p->property;
++        count--, total -= p->property;
+     }
+     assert(count == 0);
+     assert(total == 0);
+@@ -308,4 +334,3 @@
+     .nr_free_pages = default_nr_free_pages,
+     .check = default_check,
+ };
+-
+diff -r -u /home/xmh/origin/ucore_lab/labcodes/lab3/kern/mm/pmm.c lab3/kern/mm/pmm.c
+--- /home/xmh/origin/ucore_lab/labcodes/lab3/kern/mm/pmm.c	2020-05-23 13:59:51.737663588 +0000
++++ lab3/kern/mm/pmm.c	2020-05-23 12:42:19.289380462 +0000
+@@ -60,8 +60,8 @@
+  * always available at virtual address PGADDR(PDX(VPT), PDX(VPT), 0), to which
+  * vpd is set bellow.
+  * */
+-pte_t * const vpt = (pte_t *)VPT;
+-pde_t * const vpd = (pde_t *)PGADDR(PDX(VPT), PDX(VPT), 0);
++pte_t *const vpt = (pte_t *)VPT;
++pde_t *const vpd = (pde_t *)PGADDR(PDX(VPT), PDX(VPT), 0);
+ 
+ /* *
+  * Global Descriptor Table:
+@@ -82,12 +82,11 @@
+     [SEG_KDATA] = SEG(STA_W, 0x0, 0xFFFFFFFF, DPL_KERNEL),
+     [SEG_UTEXT] = SEG(STA_X | STA_R, 0x0, 0xFFFFFFFF, DPL_USER),
+     [SEG_UDATA] = SEG(STA_W, 0x0, 0xFFFFFFFF, DPL_USER),
+-    [SEG_TSS]   = SEG_NULL,
++    [SEG_TSS] = SEG_NULL,
+ };
+ 
+ static struct pseudodesc gdt_pd = {
+-    sizeof(gdt) - 1, (uintptr_t)gdt
+-};
++    sizeof(gdt) - 1, (uintptr_t)gdt};
+ 
+ static void check_alloc_page(void);
+ static void check_pgdir(void);
+@@ -98,15 +97,16 @@
+  * data/code segement registers for kernel.
+  * */
+ static inline void
+-lgdt(struct pseudodesc *pd) {
+-    asm volatile ("lgdt (%0)" :: "r" (pd));
+-    asm volatile ("movw %%ax, %%gs" :: "a" (USER_DS));
+-    asm volatile ("movw %%ax, %%fs" :: "a" (USER_DS));
+-    asm volatile ("movw %%ax, %%es" :: "a" (KERNEL_DS));
+-    asm volatile ("movw %%ax, %%ds" :: "a" (KERNEL_DS));
+-    asm volatile ("movw %%ax, %%ss" :: "a" (KERNEL_DS));
++lgdt(struct pseudodesc *pd)
++{
++    asm volatile("lgdt (%0)" ::"r"(pd));
++    asm volatile("movw %%ax, %%gs" ::"a"(USER_DS));
++    asm volatile("movw %%ax, %%fs" ::"a"(USER_DS));
++    asm volatile("movw %%ax, %%es" ::"a"(KERNEL_DS));
++    asm volatile("movw %%ax, %%ds" ::"a"(KERNEL_DS));
++    asm volatile("movw %%ax, %%ss" ::"a"(KERNEL_DS));
+     // reload cs
+-    asm volatile ("ljmp %0, $1f\n 1:\n" :: "i" (KERNEL_CS));
++    asm volatile("ljmp %0, $1f\n 1:\n" ::"i"(KERNEL_CS));
+ }
+ 
+ /* *
+@@ -114,14 +114,15 @@
+  * so that we can use different kernel stack when we trap frame
+  * user to kernel.
+  * */
+-void
+-load_esp0(uintptr_t esp0) {
++void load_esp0(uintptr_t esp0)
++{
+     ts.ts_esp0 = esp0;
+ }
+ 
+ /* gdt_init - initialize the default GDT and TSS */
+ static void
+-gdt_init(void) {
++gdt_init(void)
++{
+     // set boot kernel stack and default SS0
+     load_esp0((uintptr_t)bootstacktop);
+     ts.ts_ss0 = KERNEL_DS;
+@@ -138,45 +139,49 @@
+ 
+ //init_pmm_manager - initialize a pmm_manager instance
+ static void
+-init_pmm_manager(void) {
++init_pmm_manager(void)
++{
+     pmm_manager = &default_pmm_manager;
+     cprintf("memory management: %s\n", pmm_manager->name);
+     pmm_manager->init();
+ }
+ 
+-//init_memmap - call pmm->init_memmap to build Page struct for free memory  
++//init_memmap - call pmm->init_memmap to build Page struct for free memory
+ static void
+-init_memmap(struct Page *base, size_t n) {
++init_memmap(struct Page *base, size_t n)
++{
+     pmm_manager->init_memmap(base, n);
+ }
+ 
+-//alloc_pages - call pmm->alloc_pages to allocate a continuous n*PAGESIZE memory 
++//alloc_pages - call pmm->alloc_pages to allocate a continuous n*PAGESIZE memory
+ struct Page *
+-alloc_pages(size_t n) {
+-    struct Page *page=NULL;
++alloc_pages(size_t n)
++{
++    struct Page *page = NULL;
+     bool intr_flag;
+-    
++
+     while (1)
+     {
+-         local_intr_save(intr_flag);
+-         {
+-              page = pmm_manager->alloc_pages(n);
+-         }
+-         local_intr_restore(intr_flag);
+-
+-         if (page != NULL || n > 1 || swap_init_ok == 0) break;
+-         
+-         extern struct mm_struct *check_mm_struct;
+-         //cprintf("page %x, call swap_out in alloc_pages %d\n",page, n);
+-         swap_out(check_mm_struct, n, 0);
++        local_intr_save(intr_flag);
++        {
++            page = pmm_manager->alloc_pages(n);
++        }
++        local_intr_restore(intr_flag);
++
++        if (page != NULL || n > 1 || swap_init_ok == 0)
++            break;
++
++        extern struct mm_struct *check_mm_struct;
++        //cprintf("page %x, call swap_out in alloc_pages %d\n",page, n);
++        swap_out(check_mm_struct, n, 0);
+     }
+     //cprintf("n %d,get page %x, No %d in alloc_pages\n",n,page,(page-pages));
+     return page;
+ }
+ 
+-//free_pages - call pmm->free_pages to free a continuous n*PAGESIZE memory 
+-void
+-free_pages(struct Page *base, size_t n) {
++//free_pages - call pmm->free_pages to free a continuous n*PAGESIZE memory
++void free_pages(struct Page *base, size_t n)
++{
+     bool intr_flag;
+     local_intr_save(intr_flag);
+     {
+@@ -185,10 +190,11 @@
+     local_intr_restore(intr_flag);
+ }
+ 
+-//nr_free_pages - call pmm->nr_free_pages to get the size (nr*PAGESIZE) 
++//nr_free_pages - call pmm->nr_free_pages to get the size (nr*PAGESIZE)
+ //of current free memory
+ size_t
+-nr_free_pages(void) {
++nr_free_pages(void)
++{
+     size_t ret;
+     bool intr_flag;
+     local_intr_save(intr_flag);
+@@ -201,23 +207,28 @@
+ 
+ /* pmm_init - initialize the physical memory management */
+ static void
+-page_init(void) {
++page_init(void)
++{
+     struct e820map *memmap = (struct e820map *)(0x8000 + KERNBASE);
+     uint64_t maxpa = 0;
+ 
+     cprintf("e820map:\n");
+     int i;
+-    for (i = 0; i < memmap->nr_map; i ++) {
++    for (i = 0; i < memmap->nr_map; i++)
++    {
+         uint64_t begin = memmap->map[i].addr, end = begin + memmap->map[i].size;
+         cprintf("  memory: %08llx, [%08llx, %08llx], type = %d.\n",
+                 memmap->map[i].size, begin, end - 1, memmap->map[i].type);
+-        if (memmap->map[i].type == E820_ARM) {
+-            if (maxpa < end && begin < KMEMSIZE) {
++        if (memmap->map[i].type == E820_ARM)
++        {
++            if (maxpa < end && begin < KMEMSIZE)
++            {
+                 maxpa = end;
+             }
+         }
+     }
+-    if (maxpa > KMEMSIZE) {
++    if (maxpa > KMEMSIZE)
++    {
+         maxpa = KMEMSIZE;
+     }
+ 
+@@ -226,25 +237,32 @@
+     npage = maxpa / PGSIZE;
+     pages = (struct Page *)ROUNDUP((void *)end, PGSIZE);
+ 
+-    for (i = 0; i < npage; i ++) {
++    for (i = 0; i < npage; i++)
++    {
+         SetPageReserved(pages + i);
+     }
+ 
+     uintptr_t freemem = PADDR((uintptr_t)pages + sizeof(struct Page) * npage);
+ 
+-    for (i = 0; i < memmap->nr_map; i ++) {
++    for (i = 0; i < memmap->nr_map; i++)
++    {
+         uint64_t begin = memmap->map[i].addr, end = begin + memmap->map[i].size;
+-        if (memmap->map[i].type == E820_ARM) {
+-            if (begin < freemem) {
++        if (memmap->map[i].type == E820_ARM)
++        {
++            if (begin < freemem)
++            {
+                 begin = freemem;
+             }
+-            if (end > KMEMSIZE) {
++            if (end > KMEMSIZE)
++            {
+                 end = KMEMSIZE;
+             }
+-            if (begin < end) {
++            if (begin < end)
++            {
+                 begin = ROUNDUP(begin, PGSIZE);
+                 end = ROUNDDOWN(end, PGSIZE);
+-                if (begin < end) {
++                if (begin < end)
++                {
+                     init_memmap(pa2page(begin), (end - begin) / PGSIZE);
+                 }
+             }
+@@ -257,43 +275,47 @@
+ //  la:   linear address of this memory need to map (after x86 segment map)
+ //  size: memory size
+ //  pa:   physical address of this memory
+-//  perm: permission of this memory  
++//  perm: permission of this memory
+ static void
+-boot_map_segment(pde_t *pgdir, uintptr_t la, size_t size, uintptr_t pa, uint32_t perm) {
++boot_map_segment(pde_t *pgdir, uintptr_t la, size_t size, uintptr_t pa, uint32_t perm)
++{
+     assert(PGOFF(la) == PGOFF(pa));
+     size_t n = ROUNDUP(size + PGOFF(la), PGSIZE) / PGSIZE;
+     la = ROUNDDOWN(la, PGSIZE);
+     pa = ROUNDDOWN(pa, PGSIZE);
+-    for (; n > 0; n --, la += PGSIZE, pa += PGSIZE) {
++    for (; n > 0; n--, la += PGSIZE, pa += PGSIZE)
++    {
+         pte_t *ptep = get_pte(pgdir, la, 1);
+         assert(ptep != NULL);
+         *ptep = pa | PTE_P | perm;
+     }
+ }
+ 
+-//boot_alloc_page - allocate one page using pmm->alloc_pages(1) 
++//boot_alloc_page - allocate one page using pmm->alloc_pages(1)
+ // return value: the kernel virtual address of this allocated page
+ //note: this function is used to get the memory for PDT(Page Directory Table)&PT(Page Table)
+ static void *
+-boot_alloc_page(void) {
++boot_alloc_page(void)
++{
+     struct Page *p = alloc_page();
+-    if (p == NULL) {
++    if (p == NULL)
++    {
+         panic("boot_alloc_page failed.\n");
+     }
+     return page2kva(p);
+ }
+ 
+-//pmm_init - setup a pmm to manage physical memory, build PDT&PT to setup paging mechanism 
++//pmm_init - setup a pmm to manage physical memory, build PDT&PT to setup paging mechanism
+ //         - check the correctness of pmm & paging mechanism, print PDT&PT
+-void
+-pmm_init(void) {
++void pmm_init(void)
++{
+     // We've already enabled paging
+     boot_cr3 = PADDR(boot_pgdir);
+ 
+-    //We need to alloc/free the physical memory (granularity is 4KB or other size). 
++    //We need to alloc/free the physical memory (granularity is 4KB or other size).
+     //So a framework of physical memory manager (struct pmm_manager)is defined in pmm.h
+     //First we should init a physical memory manager(pmm) based on the framework.
+-    //Then pmm can alloc/free the physical memory. 
++    //Then pmm can alloc/free the physical memory.
+     //Now the first_fit/best_fit/worst_fit/buddy_system pmm are available.
+     init_pmm_manager();
+ 
+@@ -327,7 +349,6 @@
+     check_boot_pgdir();
+ 
+     print_pgdir();
+-
+ }
+ 
+ //get_pte - get pte and return the kernel virtual address of this pte for la
+@@ -338,7 +359,8 @@
+ //  create: a logical value to decide if alloc a page for PT
+ // return vaule: the kernel virtual address of this pte
+ pte_t *
+-get_pte(pde_t *pgdir, uintptr_t la, bool create) {
++get_pte(pde_t *pgdir, uintptr_t la, bool create)
++{
+     /* LAB2 EXERCISE 2: YOUR CODE
+      *
+      * If you need to visit a physical address, please use KADDR()
+@@ -372,16 +394,33 @@
+     }
+     return NULL;          // (8) return page table entry
+ #endif
++    pde_t *pdep = &pgdir[PDX(la)];
++    if (!(*pdep & PTE_P))
++    {
++        struct Page *page;
++        if (!create || (page = alloc_page()) == NULL)
++        {
++            return NULL;
++        }
++        set_page_ref(page, 1);
++        uintptr_t pa = page2pa(page);
++        memset(KADDR(pa), 0, PGSIZE);
++        *pdep = pa | PTE_U | PTE_W | PTE_P;
++    }
++    return &((pte_t *)KADDR(PDE_ADDR(*pdep)))[PTX(la)];
+ }
+ 
+ //get_page - get related Page struct for linear address la using PDT pgdir
+ struct Page *
+-get_page(pde_t *pgdir, uintptr_t la, pte_t **ptep_store) {
++get_page(pde_t *pgdir, uintptr_t la, pte_t **ptep_store)
++{
+     pte_t *ptep = get_pte(pgdir, la, 0);
+-    if (ptep_store != NULL) {
++    if (ptep_store != NULL)
++    {
+         *ptep_store = ptep;
+     }
+-    if (ptep != NULL && *ptep & PTE_P) {
++    if (ptep != NULL && *ptep & PTE_P)
++    {
+         return pte2page(*ptep);
+     }
+     return NULL;
+@@ -389,9 +428,10 @@
+ 
+ //page_remove_pte - free an Page sturct which is related linear address la
+ //                - and clean(invalidate) pte which is related linear address la
+-//note: PT is changed, so the TLB need to be invalidate 
++//note: PT is changed, so the TLB need to be invalidate
+ static inline void
+-page_remove_pte(pde_t *pgdir, uintptr_t la, pte_t *ptep) {
++page_remove_pte(pde_t *pgdir, uintptr_t la, pte_t *ptep)
++{
+     /* LAB2 EXERCISE 3: YOUR CODE
+      *
+      * Please check if ptep is valid, and tlb must be manually updated if mapping is updated
+@@ -417,13 +457,24 @@
+                                   //(6) flush tlb
+     }
+ #endif
++    if (*ptep & PTE_P)
++    {
++        struct Page *page = pte2page(*ptep);
++        if (page_ref_dec(page) == 0)
++        {
++            free_page(page);
++        }
++        *ptep = 0;
++        tlb_invalidate(pgdir, la);
++    }
+ }
+ 
+ //page_remove - free an Page which is related linear address la and has an validated pte
+-void
+-page_remove(pde_t *pgdir, uintptr_t la) {
++void page_remove(pde_t *pgdir, uintptr_t la)
++{
+     pte_t *ptep = get_pte(pgdir, la, 0);
+-    if (ptep != NULL) {
++    if (ptep != NULL)
++    {
+         page_remove_pte(pgdir, la, ptep);
+     }
+ }
+@@ -435,20 +486,24 @@
+ //  la:    the linear address need to map
+ //  perm:  the permission of this Page which is setted in related pte
+ // return value: always 0
+-//note: PT is changed, so the TLB need to be invalidate 
+-int
+-page_insert(pde_t *pgdir, struct Page *page, uintptr_t la, uint32_t perm) {
++//note: PT is changed, so the TLB need to be invalidate
++int page_insert(pde_t *pgdir, struct Page *page, uintptr_t la, uint32_t perm)
++{
+     pte_t *ptep = get_pte(pgdir, la, 1);
+-    if (ptep == NULL) {
++    if (ptep == NULL)
++    {
+         return -E_NO_MEM;
+     }
+     page_ref_inc(page);
+-    if (*ptep & PTE_P) {
++    if (*ptep & PTE_P)
++    {
+         struct Page *p = pte2page(*ptep);
+-        if (p == page) {
++        if (p == page)
++        {
+             page_ref_dec(page);
+         }
+-        else {
++        else
++        {
+             page_remove_pte(pgdir, la, ptep);
+         }
+     }
+@@ -459,44 +514,50 @@
+ 
+ // invalidate a TLB entry, but only if the page tables being
+ // edited are the ones currently in use by the processor.
+-void
+-tlb_invalidate(pde_t *pgdir, uintptr_t la) {
+-    if (rcr3() == PADDR(pgdir)) {
++void tlb_invalidate(pde_t *pgdir, uintptr_t la)
++{
++    if (rcr3() == PADDR(pgdir))
++    {
+         invlpg((void *)la);
+     }
+ }
+ 
+-// pgdir_alloc_page - call alloc_page & page_insert functions to 
++// pgdir_alloc_page - call alloc_page & page_insert functions to
+ //                  - allocate a page size memory & setup an addr map
+ //                  - pa<->la with linear address la and the PDT pgdir
+ struct Page *
+-pgdir_alloc_page(pde_t *pgdir, uintptr_t la, uint32_t perm) {
++pgdir_alloc_page(pde_t *pgdir, uintptr_t la, uint32_t perm)
++{
+     struct Page *page = alloc_page();
+-    if (page != NULL) {
+-        if (page_insert(pgdir, page, la, perm) != 0) {
++    if (page != NULL)
++    {
++        if (page_insert(pgdir, page, la, perm) != 0)
++        {
+             free_page(page);
+             return NULL;
+         }
+-        if (swap_init_ok){
++        if (swap_init_ok)
++        {
+             swap_map_swappable(check_mm_struct, la, page, 0);
+-            page->pra_vaddr=la;
++            page->pra_vaddr = la;
+             assert(page_ref(page) == 1);
+             //cprintf("get No. %d  page: pra_vaddr %x, pra_link.prev %x, pra_link_next %x in pgdir_alloc_page\n", (page-pages), page->pra_vaddr,page->pra_page_link.prev, page->pra_page_link.next);
+         }
+-
+     }
+ 
+     return page;
+ }
+ 
+ static void
+-check_alloc_page(void) {
++check_alloc_page(void)
++{
+     pmm_manager->check();
+     cprintf("check_alloc_page() succeeded!\n");
+ }
+ 
+ static void
+-check_pgdir(void) {
++check_pgdir(void)
++{
+     assert(npage <= KMEMSIZE / PGSIZE);
+     assert(boot_pgdir != NULL && (uint32_t)PGOFF(boot_pgdir) == 0);
+     assert(get_page(boot_pgdir, 0x0, NULL) == NULL);
+@@ -544,10 +605,12 @@
+ }
+ 
+ static void
+-check_boot_pgdir(void) {
++check_boot_pgdir(void)
++{
+     pte_t *ptep;
+     int i;
+-    for (i = 0; i < npage; i += PGSIZE) {
++    for (i = 0; i < npage; i += PGSIZE)
++    {
+         assert((ptep = get_pte(boot_pgdir, (uintptr_t)KADDR(i), 0)) != NULL);
+         assert(PTE_ADDR(*ptep) == i);
+     }
+@@ -579,7 +642,8 @@
+ 
+ //perm2str - use string 'u,r,w,-' to present the permission
+ static const char *
+-perm2str(int perm) {
++perm2str(int perm)
++{
+     static char str[4];
+     str[0] = (perm & PTE_U) ? 'u' : '-';
+     str[1] = 'r';
+@@ -598,24 +662,31 @@
+ //  table:       the beginning addr of table
+ //  left_store:  the pointer of the high side of table's next range
+ //  right_store: the pointer of the low side of table's next range
+-// return value: 0 - not a invalid item range, perm - a valid item range with perm permission 
++// return value: 0 - not a invalid item range, perm - a valid item range with perm permission
+ static int
+-get_pgtable_items(size_t left, size_t right, size_t start, uintptr_t *table, size_t *left_store, size_t *right_store) {
+-    if (start >= right) {
++get_pgtable_items(size_t left, size_t right, size_t start, uintptr_t *table, size_t *left_store, size_t *right_store)
++{
++    if (start >= right)
++    {
+         return 0;
+     }
+-    while (start < right && !(table[start] & PTE_P)) {
+-        start ++;
++    while (start < right && !(table[start] & PTE_P))
++    {
++        start++;
+     }
+-    if (start < right) {
+-        if (left_store != NULL) {
++    if (start < right)
++    {
++        if (left_store != NULL)
++        {
+             *left_store = start;
+         }
+-        int perm = (table[start ++] & PTE_USER);
+-        while (start < right && (table[start] & PTE_USER) == perm) {
+-            start ++;
++        int perm = (table[start++] & PTE_USER);
++        while (start < right && (table[start] & PTE_USER) == perm)
++        {
++            start++;
+         }
+-        if (right_store != NULL) {
++        if (right_store != NULL)
++        {
+             *right_store = start;
+         }
+         return perm;
+@@ -624,15 +695,17 @@
+ }
+ 
+ //print_pgdir - print the PDT&PT
+-void
+-print_pgdir(void) {
++void print_pgdir(void)
++{
+     cprintf("-------------------- BEGIN --------------------\n");
+     size_t left, right = 0, perm;
+-    while ((perm = get_pgtable_items(0, NPDEENTRY, right, vpd, &left, &right)) != 0) {
++    while ((perm = get_pgtable_items(0, NPDEENTRY, right, vpd, &left, &right)) != 0)
++    {
+         cprintf("PDE(%03x) %08x-%08x %08x %s\n", right - left,
+                 left * PTSIZE, right * PTSIZE, (right - left) * PTSIZE, perm2str(perm));
+         size_t l, r = left * NPTEENTRY;
+-        while ((perm = get_pgtable_items(left * NPTEENTRY, right * NPTEENTRY, r, vpt, &l, &r)) != 0) {
++        while ((perm = get_pgtable_items(left * NPTEENTRY, right * NPTEENTRY, r, vpt, &l, &r)) != 0)
++        {
+             cprintf("  |-- PTE(%05x) %08x-%08x %08x %s\n", r - l,
+                     l * PGSIZE, r * PGSIZE, (r - l) * PGSIZE, perm2str(perm));
+         }
+@@ -641,23 +714,24 @@
+ }
+ 
+ void *
+-kmalloc(size_t n) {
+-    void * ptr=NULL;
+-    struct Page *base=NULL;
+-    assert(n > 0 && n < 1024*0124);
+-    int num_pages=(n+PGSIZE-1)/PGSIZE;
++kmalloc(size_t n)
++{
++    void *ptr = NULL;
++    struct Page *base = NULL;
++    assert(n > 0 && n < 1024 * 0124);
++    int num_pages = (n + PGSIZE - 1) / PGSIZE;
+     base = alloc_pages(num_pages);
+     assert(base != NULL);
+-    ptr=page2kva(base);
++    ptr = page2kva(base);
+     return ptr;
+ }
+ 
+-void 
+-kfree(void *ptr, size_t n) {
+-    assert(n > 0 && n < 1024*0124);
++void kfree(void *ptr, size_t n)
++{
++    assert(n > 0 && n < 1024 * 0124);
+     assert(ptr != NULL);
+-    struct Page *base=NULL;
+-    int num_pages=(n+PGSIZE-1)/PGSIZE;
++    struct Page *base = NULL;
++    int num_pages = (n + PGSIZE - 1) / PGSIZE;
+     base = kva2page(ptr);
+     free_pages(base, num_pages);
+ }
+diff -r -u /home/xmh/origin/ucore_lab/labcodes/lab3/kern/mm/swap_fifo.c lab3/kern/mm/swap_fifo.c
+--- /home/xmh/origin/ucore_lab/labcodes/lab3/kern/mm/swap_fifo.c	2020-05-23 13:59:51.741663656 +0000
++++ lab3/kern/mm/swap_fifo.c	2020-05-23 13:56:58.002682483 +0000
+@@ -32,11 +32,11 @@
+  */
+ static int
+ _fifo_init_mm(struct mm_struct *mm)
+-{     
+-     list_init(&pra_list_head);
+-     mm->sm_priv = &pra_list_head;
+-     //cprintf(" mm->sm_priv %x in fifo_init_mm\n",mm->sm_priv);
+-     return 0;
++{
++    list_init(&pra_list_head);
++    mm->sm_priv = &pra_list_head;
++    //cprintf(" mm->sm_priv %x in fifo_init_mm\n",mm->sm_priv);
++    return 0;
+ }
+ /*
+  * (3)_fifo_map_swappable: According FIFO PRA, we should link the most recent arrival page at the back of pra_list_head qeueue
+@@ -44,13 +44,14 @@
+ static int
+ _fifo_map_swappable(struct mm_struct *mm, uintptr_t addr, struct Page *page, int swap_in)
+ {
+-    list_entry_t *head=(list_entry_t*) mm->sm_priv;
+-    list_entry_t *entry=&(page->pra_page_link);
+- 
++    list_entry_t *head = (list_entry_t *)mm->sm_priv;
++    list_entry_t *entry = &(page->pra_page_link);
++
+     assert(entry != NULL && head != NULL);
+     //record the page access situlation
+-    /*LAB3 EXERCISE 2: YOUR CODE*/ 
++    /*LAB3 EXERCISE 2: YOUR CODE*/
+     //(1)link the most recent arrival page at the back of the pra_list_head qeueue.
++    list_add(head, entry);
+     return 0;
+ }
+ /*
+@@ -58,61 +59,65 @@
+  *                            then assign the value of *ptr_page to the addr of this page.
+  */
+ static int
+-_fifo_swap_out_victim(struct mm_struct *mm, struct Page ** ptr_page, int in_tick)
++_fifo_swap_out_victim(struct mm_struct *mm, struct Page **ptr_page, int in_tick)
+ {
+-     list_entry_t *head=(list_entry_t*) mm->sm_priv;
+-         assert(head != NULL);
+-     assert(in_tick==0);
+-     /* Select the victim */
+-     /*LAB3 EXERCISE 2: YOUR CODE*/ 
+-     //(1)  unlink the  earliest arrival page in front of pra_list_head qeueue
+-     //(2)  assign the value of *ptr_page to the addr of this page
+-     return 0;
++    list_entry_t *head = (list_entry_t *)mm->sm_priv;
++    assert(head != NULL);
++    assert(in_tick == 0);
++    /* Select the victim */
++    /*LAB3 EXERCISE 2: YOUR CODE*/
++    //(1)  unlink the  earliest arrival page in front of pra_list_head qeueue
++    //(2)  assign the value of *ptr_page to the addr of this page
++    list_entry_t *le = head->prev;
++    struct Page *p = le2page(le, pra_page_link);
++    list_del(le);
++    *ptr_page = p;
++    return 0;
+ }
+ 
+ static int
+-_fifo_check_swap(void) {
++_fifo_check_swap(void)
++{
+     cprintf("write Virt Page c in fifo_check_swap\n");
+     *(unsigned char *)0x3000 = 0x0c;
+-    assert(pgfault_num==4);
++    assert(pgfault_num == 4);
+     cprintf("write Virt Page a in fifo_check_swap\n");
+     *(unsigned char *)0x1000 = 0x0a;
+-    assert(pgfault_num==4);
++    assert(pgfault_num == 4);
+     cprintf("write Virt Page d in fifo_check_swap\n");
+     *(unsigned char *)0x4000 = 0x0d;
+-    assert(pgfault_num==4);
++    assert(pgfault_num == 4);
+     cprintf("write Virt Page b in fifo_check_swap\n");
+     *(unsigned char *)0x2000 = 0x0b;
+-    assert(pgfault_num==4);
++    assert(pgfault_num == 4);
+     cprintf("write Virt Page e in fifo_check_swap\n");
+     *(unsigned char *)0x5000 = 0x0e;
+-    assert(pgfault_num==5);
++    assert(pgfault_num == 5);
+     cprintf("write Virt Page b in fifo_check_swap\n");
+     *(unsigned char *)0x2000 = 0x0b;
+-    assert(pgfault_num==5);
++    assert(pgfault_num == 5);
+     cprintf("write Virt Page a in fifo_check_swap\n");
+     *(unsigned char *)0x1000 = 0x0a;
+-    assert(pgfault_num==6);
++    assert(pgfault_num == 6);
+     cprintf("write Virt Page b in fifo_check_swap\n");
+     *(unsigned char *)0x2000 = 0x0b;
+-    assert(pgfault_num==7);
++    assert(pgfault_num == 7);
+     cprintf("write Virt Page c in fifo_check_swap\n");
+     *(unsigned char *)0x3000 = 0x0c;
+-    assert(pgfault_num==8);
++    assert(pgfault_num == 8);
+     cprintf("write Virt Page d in fifo_check_swap\n");
+     *(unsigned char *)0x4000 = 0x0d;
+-    assert(pgfault_num==9);
++    assert(pgfault_num == 9);
+     cprintf("write Virt Page e in fifo_check_swap\n");
+     *(unsigned char *)0x5000 = 0x0e;
+-    assert(pgfault_num==10);
++    assert(pgfault_num == 10);
+     cprintf("write Virt Page a in fifo_check_swap\n");
+     assert(*(unsigned char *)0x1000 == 0x0a);
+     *(unsigned char *)0x1000 = 0x0a;
+-    assert(pgfault_num==11);
++    assert(pgfault_num == 11);
+     return 0;
+ }
+ 
+-
+ static int
+ _fifo_init(void)
+ {
+@@ -127,17 +132,18 @@
+ 
+ static int
+ _fifo_tick_event(struct mm_struct *mm)
+-{ return 0; }
+-
++{
++    return 0;
++}
+ 
+ struct swap_manager swap_manager_fifo =
+-{
+-     .name            = "fifo swap manager",
+-     .init            = &_fifo_init,
+-     .init_mm         = &_fifo_init_mm,
+-     .tick_event      = &_fifo_tick_event,
+-     .map_swappable   = &_fifo_map_swappable,
+-     .set_unswappable = &_fifo_set_unswappable,
+-     .swap_out_victim = &_fifo_swap_out_victim,
+-     .check_swap      = &_fifo_check_swap,
++    {
++        .name = "fifo swap manager",
++        .init = &_fifo_init,
++        .init_mm = &_fifo_init_mm,
++        .tick_event = &_fifo_tick_event,
++        .map_swappable = &_fifo_map_swappable,
++        .set_unswappable = &_fifo_set_unswappable,
++        .swap_out_victim = &_fifo_swap_out_victim,
++        .check_swap = &_fifo_check_swap,
+ };
+diff -r -u /home/xmh/origin/ucore_lab/labcodes/lab3/kern/mm/vmm.c lab3/kern/mm/vmm.c
+--- /home/xmh/origin/ucore_lab/labcodes/lab3/kern/mm/vmm.c	2020-05-23 13:59:51.741663656 +0000
++++ lab3/kern/mm/vmm.c	2020-05-23 13:55:33.193190176 +0000
+@@ -40,27 +40,33 @@
+ 
+ // mm_create -  alloc a mm_struct & initialize it.
+ struct mm_struct *
+-mm_create(void) {
++mm_create(void)
++{
+     struct mm_struct *mm = kmalloc(sizeof(struct mm_struct));
+ 
+-    if (mm != NULL) {
++    if (mm != NULL)
++    {
+         list_init(&(mm->mmap_list));
+         mm->mmap_cache = NULL;
+         mm->pgdir = NULL;
+         mm->map_count = 0;
+ 
+-        if (swap_init_ok) swap_init_mm(mm);
+-        else mm->sm_priv = NULL;
++        if (swap_init_ok)
++            swap_init_mm(mm);
++        else
++            mm->sm_priv = NULL;
+     }
+     return mm;
+ }
+ 
+ // vma_create - alloc a vma_struct & initialize it. (addr range: vm_start~vm_end)
+ struct vma_struct *
+-vma_create(uintptr_t vm_start, uintptr_t vm_end, uint32_t vm_flags) {
++vma_create(uintptr_t vm_start, uintptr_t vm_end, uint32_t vm_flags)
++{
+     struct vma_struct *vma = kmalloc(sizeof(struct vma_struct));
+ 
+-    if (vma != NULL) {
++    if (vma != NULL)
++    {
+         vma->vm_start = vm_start;
+         vma->vm_end = vm_end;
+         vma->vm_flags = vm_flags;
+@@ -68,101 +74,112 @@
+     return vma;
+ }
+ 
+-
+ // find_vma - find a vma  (vma->vm_start <= addr <= vma_vm_end)
+ struct vma_struct *
+-find_vma(struct mm_struct *mm, uintptr_t addr) {
++find_vma(struct mm_struct *mm, uintptr_t addr)
++{
+     struct vma_struct *vma = NULL;
+-    if (mm != NULL) {
++    if (mm != NULL)
++    {
+         vma = mm->mmap_cache;
+-        if (!(vma != NULL && vma->vm_start <= addr && vma->vm_end > addr)) {
+-                bool found = 0;
+-                list_entry_t *list = &(mm->mmap_list), *le = list;
+-                while ((le = list_next(le)) != list) {
+-                    vma = le2vma(le, list_link);
+-                    if (vma->vm_start<=addr && addr < vma->vm_end) {
+-                        found = 1;
+-                        break;
+-                    }
+-                }
+-                if (!found) {
+-                    vma = NULL;
++        if (!(vma != NULL && vma->vm_start <= addr && vma->vm_end > addr))
++        {
++            bool found = 0;
++            list_entry_t *list = &(mm->mmap_list), *le = list;
++            while ((le = list_next(le)) != list)
++            {
++                vma = le2vma(le, list_link);
++                if (vma->vm_start <= addr && addr < vma->vm_end)
++                {
++                    found = 1;
++                    break;
+                 }
++            }
++            if (!found)
++            {
++                vma = NULL;
++            }
+         }
+-        if (vma != NULL) {
++        if (vma != NULL)
++        {
+             mm->mmap_cache = vma;
+         }
+     }
+     return vma;
+ }
+ 
+-
+ // check_vma_overlap - check if vma1 overlaps vma2 ?
+ static inline void
+-check_vma_overlap(struct vma_struct *prev, struct vma_struct *next) {
++check_vma_overlap(struct vma_struct *prev, struct vma_struct *next)
++{
+     assert(prev->vm_start < prev->vm_end);
+     assert(prev->vm_end <= next->vm_start);
+     assert(next->vm_start < next->vm_end);
+ }
+ 
+-
+ // insert_vma_struct -insert vma in mm's list link
+-void
+-insert_vma_struct(struct mm_struct *mm, struct vma_struct *vma) {
++void insert_vma_struct(struct mm_struct *mm, struct vma_struct *vma)
++{
+     assert(vma->vm_start < vma->vm_end);
+     list_entry_t *list = &(mm->mmap_list);
+     list_entry_t *le_prev = list, *le_next;
+ 
+-        list_entry_t *le = list;
+-        while ((le = list_next(le)) != list) {
+-            struct vma_struct *mmap_prev = le2vma(le, list_link);
+-            if (mmap_prev->vm_start > vma->vm_start) {
+-                break;
+-            }
+-            le_prev = le;
++    list_entry_t *le = list;
++    while ((le = list_next(le)) != list)
++    {
++        struct vma_struct *mmap_prev = le2vma(le, list_link);
++        if (mmap_prev->vm_start > vma->vm_start)
++        {
++            break;
+         }
++        le_prev = le;
++    }
+ 
+     le_next = list_next(le_prev);
+ 
+     /* check overlap */
+-    if (le_prev != list) {
++    if (le_prev != list)
++    {
+         check_vma_overlap(le2vma(le_prev, list_link), vma);
+     }
+-    if (le_next != list) {
++    if (le_next != list)
++    {
+         check_vma_overlap(vma, le2vma(le_next, list_link));
+     }
+ 
+     vma->vm_mm = mm;
+     list_add_after(le_prev, &(vma->list_link));
+ 
+-    mm->map_count ++;
++    mm->map_count++;
+ }
+ 
+ // mm_destroy - free mm and mm internal fields
+-void
+-mm_destroy(struct mm_struct *mm) {
++void mm_destroy(struct mm_struct *mm)
++{
+ 
+     list_entry_t *list = &(mm->mmap_list), *le;
+-    while ((le = list_next(list)) != list) {
++    while ((le = list_next(list)) != list)
++    {
+         list_del(le);
+-        kfree(le2vma(le, list_link),sizeof(struct vma_struct));  //kfree vma        
++        kfree(le2vma(le, list_link), sizeof(struct vma_struct)); //kfree vma
+     }
+     kfree(mm, sizeof(struct mm_struct)); //kfree mm
+-    mm=NULL;
++    mm = NULL;
+ }
+ 
+ // vmm_init - initialize virtual memory management
+ //          - now just call check_vmm to check correctness of vmm
+-void
+-vmm_init(void) {
++void vmm_init(void)
++{
+     check_vmm();
+ }
+ 
+ // check_vmm - check correctness of vmm
+ static void
+-check_vmm(void) {
++check_vmm(void)
++{
+     size_t nr_free_pages_store = nr_free_pages();
+-    
++
+     check_vma_struct();
+     check_pgfault();
+ 
+@@ -172,7 +189,8 @@
+ }
+ 
+ static void
+-check_vma_struct(void) {
++check_vma_struct(void)
++{
+     size_t nr_free_pages_store = nr_free_pages();
+ 
+     struct mm_struct *mm = mm_create();
+@@ -181,13 +199,15 @@
+     int step1 = 10, step2 = step1 * 10;
+ 
+     int i;
+-    for (i = step1; i >= 1; i --) {
++    for (i = step1; i >= 1; i--)
++    {
+         struct vma_struct *vma = vma_create(i * 5, i * 5 + 2, 0);
+         assert(vma != NULL);
+         insert_vma_struct(mm, vma);
+     }
+ 
+-    for (i = step1 + 1; i <= step2; i ++) {
++    for (i = step1 + 1; i <= step2; i++)
++    {
+         struct vma_struct *vma = vma_create(i * 5, i * 5 + 2, 0);
+         assert(vma != NULL);
+         insert_vma_struct(mm, vma);
+@@ -195,33 +215,37 @@
+ 
+     list_entry_t *le = list_next(&(mm->mmap_list));
+ 
+-    for (i = 1; i <= step2; i ++) {
++    for (i = 1; i <= step2; i++)
++    {
+         assert(le != &(mm->mmap_list));
+         struct vma_struct *mmap = le2vma(le, list_link);
+         assert(mmap->vm_start == i * 5 && mmap->vm_end == i * 5 + 2);
+         le = list_next(le);
+     }
+ 
+-    for (i = 5; i <= 5 * step2; i +=5) {
++    for (i = 5; i <= 5 * step2; i += 5)
++    {
+         struct vma_struct *vma1 = find_vma(mm, i);
+         assert(vma1 != NULL);
+-        struct vma_struct *vma2 = find_vma(mm, i+1);
++        struct vma_struct *vma2 = find_vma(mm, i + 1);
+         assert(vma2 != NULL);
+-        struct vma_struct *vma3 = find_vma(mm, i+2);
++        struct vma_struct *vma3 = find_vma(mm, i + 2);
+         assert(vma3 == NULL);
+-        struct vma_struct *vma4 = find_vma(mm, i+3);
++        struct vma_struct *vma4 = find_vma(mm, i + 3);
+         assert(vma4 == NULL);
+-        struct vma_struct *vma5 = find_vma(mm, i+4);
++        struct vma_struct *vma5 = find_vma(mm, i + 4);
+         assert(vma5 == NULL);
+ 
+-        assert(vma1->vm_start == i  && vma1->vm_end == i  + 2);
+-        assert(vma2->vm_start == i  && vma2->vm_end == i  + 2);
++        assert(vma1->vm_start == i && vma1->vm_end == i + 2);
++        assert(vma2->vm_start == i && vma2->vm_end == i + 2);
+     }
+ 
+-    for (i =4; i>=0; i--) {
+-        struct vma_struct *vma_below_5= find_vma(mm,i);
+-        if (vma_below_5 != NULL ) {
+-           cprintf("vma_below_5: i %x, start %x, end %x\n",i, vma_below_5->vm_start, vma_below_5->vm_end); 
++    for (i = 4; i >= 0; i--)
++    {
++        struct vma_struct *vma_below_5 = find_vma(mm, i);
++        if (vma_below_5 != NULL)
++        {
++            cprintf("vma_below_5: i %x, start %x, end %x\n", i, vma_below_5->vm_start, vma_below_5->vm_end);
+         }
+         assert(vma_below_5 == NULL);
+     }
+@@ -237,7 +261,8 @@
+ 
+ // check_pgfault - check correctness of pgfault handler
+ static void
+-check_pgfault(void) {
++check_pgfault(void)
++{
+     size_t nr_free_pages_store = nr_free_pages();
+ 
+     check_mm_struct = mm_create();
+@@ -256,11 +281,13 @@
+     assert(find_vma(mm, addr) == vma);
+ 
+     int i, sum = 0;
+-    for (i = 0; i < 100; i ++) {
++    for (i = 0; i < 100; i++)
++    {
+         *(char *)(addr + i) = i;
+         sum += i;
+     }
+-    for (i = 0; i < 100; i ++) {
++    for (i = 0; i < 100; i++)
++    {
+         sum -= *(char *)(addr + i);
+     }
+     assert(sum == 0);
+@@ -278,7 +305,7 @@
+     cprintf("check_pgfault() succeeded!\n");
+ }
+ //page fault number
+-volatile unsigned int pgfault_num=0;
++volatile unsigned int pgfault_num = 0;
+ 
+ /* do_pgfault - interrupt handler to process the page fault execption
+  * @mm         : the control struct for a set of vma using the same PDT
+@@ -301,24 +328,27 @@
+  *         -- The U/S flag (bit 2) indicates whether the processor was executing at user mode (1)
+  *            or supervisor mode (0) at the time of the exception.
+  */
+-int
+-do_pgfault(struct mm_struct *mm, uint32_t error_code, uintptr_t addr) {
++int do_pgfault(struct mm_struct *mm, uint32_t error_code, uintptr_t addr)
++{
+     int ret = -E_INVAL;
+     //try to find a vma which include addr
+     struct vma_struct *vma = find_vma(mm, addr);
+ 
+     pgfault_num++;
+     //If the addr is in the range of a mm's vma?
+-    if (vma == NULL || vma->vm_start > addr) {
++    if (vma == NULL || vma->vm_start > addr)
++    {
+         cprintf("not valid addr %x, and  can not find it in vma\n", addr);
+         goto failed;
+     }
+     //check the error_code
+-    switch (error_code & 3) {
++    switch (error_code & 3)
++    {
+     default:
+-            /* error code flag : default is 3 ( W/R=1, P=1): write, present */
++        /* error code flag : default is 3 ( W/R=1, P=1): write, present */
+     case 2: /* error code flag : (W/R=1, P=0): write, not present */
+-        if (!(vma->vm_flags & VM_WRITE)) {
++        if (!(vma->vm_flags & VM_WRITE))
++        {
+             cprintf("do_pgfault failed: error code flag = write AND not present, but the addr's vma cannot write\n");
+             goto failed;
+         }
+@@ -327,7 +357,8 @@
+         cprintf("do_pgfault failed: error code flag = read AND present\n");
+         goto failed;
+     case 0: /* error code flag : (W/R=0, P=0): read, not present */
+-        if (!(vma->vm_flags & (VM_READ | VM_EXEC))) {
++        if (!(vma->vm_flags & (VM_READ | VM_EXEC)))
++        {
+             cprintf("do_pgfault failed: error code flag = read AND not present, but the addr's vma cannot read or exec\n");
+             goto failed;
+         }
+@@ -339,14 +370,15 @@
+      *    continue process
+      */
+     uint32_t perm = PTE_U;
+-    if (vma->vm_flags & VM_WRITE) {
++    if (vma->vm_flags & VM_WRITE)
++    {
+         perm |= PTE_W;
+     }
+     addr = ROUNDDOWN(addr, PGSIZE);
+ 
+     ret = -E_NO_MEM;
+ 
+-    pte_t *ptep=NULL;
++    pte_t *ptep = NULL;
+     /*LAB3 EXERCISE 1: YOUR CODE
+     * Maybe you want help comment, BELOW comments can help you finish the code
+     *
+@@ -396,8 +428,43 @@
+         }
+    }
+ #endif
+-   ret = 0;
++    ptep = get_pte(mm->pgdir, addr, 1);
++    if (ptep == NULL)
++    {
++        cprintf("get_pte failed\n");
++        goto failed;
++    }
++
++    if (*ptep == 0)
++    {
++        struct Page *page = pgdir_alloc_page(mm->pgdir, addr, perm);
++        if (page == NULL)
++        {
++            cprintf("pgdir_alloc_page failed\n");
++            goto failed;
++        }
++    }
++    else
++    {
++        if (swap_init_ok)
++        {
++            struct Page *page = NULL;
++            if ((ret = swap_in(mm, addr, &page)) != 0)
++            {
++                cprintf("swap_in failed\n");
++                goto failed;
++            }
++            page_insert(mm->pgdir, page, addr, perm);
++            swap_map_swappable(mm, addr, page, 1);
++            page->pra_vaddr = addr;
++        }
++        else
++        {
++            cprintf("no swap_init_ok but ptep is %x, failed\n", *ptep);
++            goto failed;
++        }
++    }
++    ret = 0;
+ failed:
+     return ret;
+ }
+-
+diff -r -u /home/xmh/origin/ucore_lab/labcodes/lab3/kern/trap/trap.c lab3/kern/trap/trap.c
+--- /home/xmh/origin/ucore_lab/labcodes/lab3/kern/trap/trap.c	2020-05-23 13:59:51.741663656 +0000
++++ lab3/kern/trap/trap.c	2020-05-23 12:42:06.089111101 +0000
+@@ -48,6 +48,14 @@
+       *     You don't know the meaning of this instruction? just google it! and check the libs/x86.h to know more.
+       *     Notice: the argument of lidt is idt_pd. try to find it!
+       */
++    extern uintptr_t __vectors[];
++    int i;
++    for (i = 0; i < 256; i++)
++    {
++        SETGATE(idt[i], 0, GD_KTEXT, __vectors[i], DPL_KERNEL);
++    }
++    SETGATE(idt[T_SWITCH_TOK], 0, GD_KTEXT, __vectors[T_SWITCH_TOK], DPL_USER);
++    lidt(&idt_pd);
+ }
+ 
+ static const char *
+@@ -162,6 +170,9 @@
+ static volatile int in_swap_tick_event = 0;
+ extern struct mm_struct *check_mm_struct;
+ 
++/* temporary trapframe or pointer to trapframe */
++struct trapframe switchk2u, *switchu2k;
++
+ static void
+ trap_dispatch(struct trapframe *tf) {
+     char c;
+@@ -186,6 +197,11 @@
+          * (2) Every TICK_NUM cycle, you can print some info using a funciton, such as print_ticks().
+          * (3) Too Simple? Yes, I think so!
+          */
++        ticks++;
++        if (ticks % TICK_NUM == 0)
++        {
++            print_ticks();
++        }
+         break;
+     case IRQ_OFFSET + IRQ_COM1:
+         c = cons_getc();
+@@ -197,8 +213,29 @@
+         break;
+     //LAB1 CHALLENGE 1 : YOUR CODE you should modify below codes.
+     case T_SWITCH_TOU:
++        if (tf->tf_cs != USER_CS)
++        {
++            switchk2u = *tf;
++            switchk2u.tf_cs = USER_CS;
++            switchk2u.tf_ds = USER_DS;
++            switchk2u.tf_es = USER_DS;
++            switchk2u.tf_ss = USER_DS;
++            switchk2u.tf_esp = (uint32_t)tf + sizeof(struct trapframe) - 8;
++            switchk2u.tf_eflags |= FL_IOPL_MASK;
++            *((uint32_t *)tf - 1) = (uint32_t)&switchk2u;
++        }
++        break;
+     case T_SWITCH_TOK:
+-        panic("T_SWITCH_** ??\n");
++        if (tf->tf_cs != KERNEL_CS)
++        {
++            tf->tf_cs = KERNEL_CS;
++            tf->tf_ds = KERNEL_DS;
++            tf->tf_es = KERNEL_DS;
++            tf->tf_eflags &= ~FL_IOPL_MASK;
++            switchu2k = (struct trapframe *)(tf->tf_esp - (sizeof(struct trapframe) - 8));
++            memmove(switchu2k, tf, sizeof(struct trapframe) - 8);
++            *((uint32_t *)tf - 1) = (uint32_t)switchu2k;
++        }
+         break;
+     case IRQ_OFFSET + IRQ_IDE1:
+     case IRQ_OFFSET + IRQ_IDE2:
+diff -r -u /home/xmh/origin/ucore_lab/labcodes/lab3/Makefile lab3/Makefile
+--- /home/xmh/origin/ucore_lab/labcodes/lab3/Makefile	2020-05-23 13:59:51.737663588 +0000
++++ lab3/Makefile	2020-05-23 10:02:12.463600611 +0000
+@@ -222,7 +222,7 @@
+ 
+ .DEFAULT_GOAL := TARGETS
+ 
+-QEMUOPTS = -hda $(UCOREIMG) -drive file=$(SWAPIMG),media=disk,cache=writeback
++QEMUOPTS = -hda $(UCOREIMG) -drive file=$(SWAPIMG),media=disk,cache=writeback -curses
+ 
+ .PHONY: qemu qemu-nox debug debug-nox
+ qemu-mon: $(UCOREIMG) $(SWAPIMG)
+只在 lab3 存在：obj
+只在 lab3 存在：.qemu.out
